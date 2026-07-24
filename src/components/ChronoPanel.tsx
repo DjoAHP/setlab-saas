@@ -106,21 +106,21 @@ export function ChronoPanel() {
               onClick={() => chronoService.start()}
               style={{ ...buttonStyle, background: "hsl(var(--tl-accent-button))", borderColor: "hsl(var(--tl-accent-button-border))", color: "white" }}
             >
-              ▶ Start
+              ▶ Démarrer
             </button>
           ) : (
             <button
               onClick={() => chronoService.stop()}
               style={{ ...buttonStyle, background: "hsl(0, 60%, 35%)", borderColor: "hsl(0, 60%, 45%)", color: "white" }}
             >
-              ⏸ Stop
+              ⏸ Arrêter
             </button>
           )}
           <button
             onClick={() => chronoService.reset()}
             style={{ ...buttonStyle, background: "hsl(220, 15%, 20%)", borderColor: "hsl(220, 15%, 30%)", color: "hsl(220, 15%, 70%)" }}
           >
-            ↺ Reset
+            ↺ Réinitialiser
           </button>
         </div>
 
