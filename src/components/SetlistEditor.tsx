@@ -33,6 +33,7 @@ export function SetlistEditor() {
   const [stageSeconds, setStageSeconds] = useState("");
   const [stageEnabled, setStageEnabled] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [ordreModalOuverte, setOrdreModalOuverte] = useState(false);
 
   const dragItemId = useRef<string | null>(null);
   const [draggedSongId, setDraggedSongId] = useState<string | null>(null);
@@ -131,28 +132,13 @@ export function SetlistEditor() {
     dragItemId.current = null;
   }, []);
 
-  // ── Monter / descendre (mobile) ──────────────────────────
-  const handleMoveUp = useCallback((songId: string) => {
-    const idx = songs.findIndex((s) => s.id === songId);
-    if (idx > 0) {
-      reorderSong(songId, songs[idx - 1].position);
-    }
-  }, [songs, reorderSong]);
-
-  const handleMoveDown = useCallback((songId: string) => {
-    const idx = songs.findIndex((s) => s.id === songId);
-    if (idx < songs.length - 1) {
-      reorderSong(songId, songs[idx + 1].position);
-    }
-  }, [songs, reorderSong]);
-
-  // ESC pour fermer la confirmation
+  // ESC pour fermer les modales
   useEffect(() => {
-    if (!deleteConfirmId) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setDeleteConfirmId(null); };
+    if (!deleteConfirmId && !ordreModalOuverte) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setDeleteConfirmId(null); setOrdreModalOuverte(false); } };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [deleteConfirmId]);
+  }, [deleteConfirmId, ordreModalOuverte]);
 
   const handleImporter = useCallback(() => {
     const input = document.createElement("input");
@@ -225,35 +211,48 @@ export function SetlistEditor() {
 
           {/* Temps de scène */}
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <label style={{ fontSize: "11px", color: "hsl(220, 15%, 50%)" }}>
-                Temps de scène
-              </label>
-              <button
-                onClick={() => handleStageToggle(!stageEnabled)}
-                style={{
-                  width: "32px",
-                  height: "20px",
-                  borderRadius: "10px",
-                  border: "none",
-                  cursor: "pointer",
-                  position: "relative",
-                  background: stageEnabled ? "hsl(var(--tl-accent-button))" : "hsl(220, 15%, 22%)",
-                  transition: "background 0.2s",
-                }}
-              >
-                <div
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <label style={{ fontSize: "11px", color: "hsl(220, 15%, 50%)" }}>
+                  Temps de scène
+                </label>
+                <button
+                  onClick={() => handleStageToggle(!stageEnabled)}
                   style={{
-                    width: "16px",
-                    height: "16px",
-                    borderRadius: "50%",
-                    background: "white",
-                    position: "absolute",
-                    top: "2px",
-                    left: stageEnabled ? "14px" : "2px",
-                    transition: "left 0.2s",
+                    width: "32px",
+                    height: "20px",
+                    borderRadius: "10px",
+                    border: "none",
+                    cursor: "pointer",
+                    position: "relative",
+                    background: stageEnabled ? "hsl(var(--tl-accent-button))" : "hsl(220, 15%, 22%)",
+                    transition: "background 0.2s",
                   }}
-                />
+                >
+                  <div
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      borderRadius: "50%",
+                      background: "white",
+                      position: "absolute",
+                      top: "2px",
+                      left: stageEnabled ? "14px" : "2px",
+                      transition: "left 0.2s",
+                    }}
+                  />
+                </button>
+              </div>
+              <button
+                onClick={() => setOrdreModalOuverte(true)}
+                style={{
+                  background: "hsl(222, 18%, 17%)", border: "1px solid hsl(220, 15%, 22%)",
+                  color: "hsl(220, 15%, 50%)", padding: "6px 10px", borderRadius: "6px",
+                  fontSize: "11px", cursor: "pointer", whiteSpace: "nowrap",
+                }}
+                title="Réordonner les morceaux"
+              >
+                Ordre
               </button>
             </div>
             {stageEnabled && (
@@ -347,20 +346,6 @@ export function SetlistEditor() {
                   onDrop={(e) => handleDrop(e, song.id)}
                   onDragEnd={handleDragEnd}
                 >
-                  {/* Supprimer (à gauche) */}
-                  <button
-                    onClick={() => setDeleteConfirmId(song.id)}
-                    style={{
-                      background: "none", border: "none", color: "hsl(220, 15%, 30%)",
-                      cursor: "pointer", padding: "2px 4px", fontSize: "12px", flexShrink: 0,
-                    }}
-                    onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; }}
-                    onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(220, 15%, 30%)"; }}
-                    title="Supprimer"
-                  >
-                    ×
-                  </button>
-
                   {/* Tonalité */}
                   <select
                     value={song.tonalite ?? ""}
@@ -451,31 +436,19 @@ export function SetlistEditor() {
                     </div>
                   </div>
 
-                  {/* ▲ / ▼ (mobile) */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1px", flexShrink: 0 }}>
-                    <button
-                      onClick={() => handleMoveUp(song.id)}
-                      disabled={song.position <= 1}
-                      style={{
-                        background: "none", border: "none", color: song.position <= 1 ? "hsl(220, 15%, 20%)" : "hsl(220, 15%, 45%)",
-                        cursor: song.position <= 1 ? "default" : "pointer", padding: "0 2px", lineHeight: "1", fontSize: "10px",
-                      }}
-                      title="Monter"
-                    >
-                      ▲
-                    </button>
-                    <button
-                      onClick={() => handleMoveDown(song.id)}
-                      disabled={song.position >= songs.length}
-                      style={{
-                        background: "none", border: "none", color: song.position >= songs.length ? "hsl(220, 15%, 20%)" : "hsl(220, 15%, 45%)",
-                        cursor: song.position >= songs.length ? "default" : "pointer", padding: "0 2px", lineHeight: "1", fontSize: "10px",
-                      }}
-                      title="Descendre"
-                    >
-                      ▼
-                    </button>
-                  </div>
+                  {/* Supprimer */}
+                  <button
+                    onClick={() => setDeleteConfirmId(song.id)}
+                    style={{
+                      background: "none", border: "none", color: "hsl(220, 15%, 30%)",
+                      cursor: "pointer", padding: "2px", fontSize: "12px", flexShrink: 0,
+                    }}
+                    onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; }}
+                    onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(220, 15%, 30%)"; }}
+                    title="Supprimer"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
@@ -512,6 +485,65 @@ export function SetlistEditor() {
           Exporter PDF
         </button>
       </div>
+
+      {/* Modal ordre */}
+      {ordreModalOuverte && (
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 100,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: "rgba(10, 12, 20, 0.82)", backdropFilter: "blur(4px)",
+          }}
+          onClick={() => setOrdreModalOuverte(false)}
+        >
+          <div
+            style={{
+              background: "hsl(222, 22%, 12%)", border: "1px solid hsl(220, 15%, 22%)",
+              borderRadius: "12px", width: "300px", maxHeight: "80vh",
+              display: "flex", flexDirection: "column",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ padding: "16px 20px", borderBottom: "1px solid hsl(220, 15%, 18%)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ color: "hsl(210, 30%, 90%)", fontSize: "14px", fontWeight: 600 }}>Ordre des morceaux</span>
+              <button onClick={() => setOrdreModalOuverte(false)} style={{ background: "none", border: "none", color: "hsl(220, 15%, 45%)", cursor: "pointer", fontSize: "16px" }}>✕</button>
+            </div>
+            <div style={{ overflowY: "auto", flex: 1, padding: "8px 0" }}>
+              {songs.map((song, index) => (
+                <div
+                  key={song.id}
+                  draggable
+                  style={{
+                    display: "flex", alignItems: "center", gap: "8px",
+                    padding: "10px 16px", borderBottom: index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
+                    cursor: "grab",
+                  }}
+                  onDragStart={(e) => handleDragStart(e, song.id)}
+                  onDragOver={(e) => handleDragOver(e, song.id)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, song.id)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <svg width="10" height="16" viewBox="0 0 8 12" fill="currentColor" style={{ color: "hsl(220, 15%, 30%)", flexShrink: 0 }}>
+                    <circle cx="2" cy="2" r="1.2" />
+                    <circle cx="6" cy="2" r="1.2" />
+                    <circle cx="2" cy="6" r="1.2" />
+                    <circle cx="6" cy="6" r="1.2" />
+                    <circle cx="2" cy="10" r="1.2" />
+                    <circle cx="6" cy="10" r="1.2" />
+                  </svg>
+                  <span style={{ color: "hsl(220, 15%, 40%)", fontSize: "12px", fontFamily: "monospace", flexShrink: 0, width: "24px" }}>
+                    {song.position.toString().padStart(2, '0')}.
+                  </span>
+                  <span style={{ flex: 1, color: "hsl(210, 30%, 85%)", fontSize: "13px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {song.title}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation suppression */}
       {deleteConfirmId && (
