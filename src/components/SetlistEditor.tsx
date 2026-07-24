@@ -108,10 +108,14 @@ export function SetlistEditor() {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDragOverSongId(songId);
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    setDropPosition(e.clientY < rect.top + rect.height / 2 ? "before" : "after");
   }, []);
 
   const handleDragLeave = useCallback(() => {
     setDragOverSongId(null);
+    setDropPosition(null);
   }, []);
 
   const handleDrop = useCallback(
@@ -121,13 +125,15 @@ export function SetlistEditor() {
       if (!sourceSongId || sourceSongId === targetSongId) return;
       const targetSong = songs.find((s) => s.id === targetSongId);
       if (targetSong) {
-        reorderSong(sourceSongId, targetSong.position);
+        const pos = dropPosition === "before" ? targetSong.position : Math.min(targetSong.position + 1, songs.length);
+        reorderSong(sourceSongId, pos);
       }
       setDraggedSongId(null);
       setDragOverSongId(null);
+      setDropPosition(null);
       dragItemId.current = null;
     },
-    [songs, reorderSong]
+    [songs, reorderSong, dropPosition]
   );
 
   const handleDragEnd = useCallback(() => {
