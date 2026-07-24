@@ -27,9 +27,15 @@ function AppContent() {
     return (
       <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", overflow: "hidden" }}>
         <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", flexDirection: "column" }}>
-          {mobileTab === "editor" && <SetlistEditor />}
-          {mobileTab === "preview" && <SetlistPreview />}
-          {mobileTab === "chrono" && <ChronoPanel />}
+          <div style={{ flex: 1, minHeight: 0, display: mobileTab === "editor" ? "flex" : "none" }}>
+            <SetlistEditor />
+          </div>
+          <div style={{ flex: 1, minHeight: 0, visibility: mobileTab === "preview" ? "visible" : "hidden", pointerEvents: mobileTab === "preview" ? "auto" : "none" }}>
+            <SetlistPreview />
+          </div>
+          <div style={{ flex: 1, minHeight: 0, display: mobileTab === "chrono" ? "flex" : "none" }}>
+            <ChronoPanel />
+          </div>
         </div>
 
         <div
@@ -52,7 +58,7 @@ function AppContent() {
                 background: mobileTab === tab.key ? "hsl(222, 18%, 16%)" : "transparent",
                 color: mobileTab === tab.key ? "hsl(var(--tl-accent-princ))" : "hsl(220, 15%, 50%)",
                 fontSize: "12px", fontWeight: 600, cursor: "pointer",
-                borderTop: mobileTab === tab.key ? "2px solid hsl(var(--tl-accent-border))" : "2px solid transparent",
+                borderTop: mobileTab === tab.key ? "2px solid hsl(210, 30%, 90%)" : "2px solid transparent",
               }}
             >
               {tab.label}

@@ -392,22 +392,27 @@ export function SetlistEditor() {
                   {/* Titre + temps */}
                   <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "6px", minWidth: 0 }}>
                     {editingSongId === song.id ? (
-                      <input
-                        autoFocus
-                        type="text"
-                        value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
-                        onBlur={handleSaveEdit}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSaveEdit();
-                          if (e.key === "Escape") handleCancelEdit();
-                        }}
-                        style={{
-                          flex: 1, background: "transparent", border: "none",
-                          borderBottom: "2px solid #333", color: "white",
-                          fontSize: "12px", outline: "none",
-                        }}
-                      />
+                      <div style={{ display: "flex", alignItems: "center", gap: "4px", flex: 1, minWidth: 0 }}>
+                        <span style={{ color: "hsl(220, 15%, 40%)", fontSize: "10px", flexShrink: 0 }}>
+                          {song.position.toString().padStart(2, '0')}.
+                        </span>
+                        <input
+                          autoFocus
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          onBlur={handleSaveEdit}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSaveEdit();
+                            if (e.key === "Escape") handleCancelEdit();
+                          }}
+                          style={{
+                            flex: 1, background: "transparent", border: "none",
+                            borderBottom: "2px solid #333", color: "white",
+                            fontSize: "12px", outline: "none",
+                          }}
+                        />
+                      </div>
                     ) : (
                       <span
                         onClick={() => handleStartEdit(song)}
@@ -417,6 +422,9 @@ export function SetlistEditor() {
                           textOverflow: "ellipsis", whiteSpace: "nowrap",
                         }}
                       >
+                        <span style={{ color: "hsl(220, 15%, 40%)", marginRight: "4px", fontSize: "10px" }}>
+                          {song.position.toString().padStart(2, '0')}.
+                        </span>
                         {song.title}
                       </span>
                     )}
