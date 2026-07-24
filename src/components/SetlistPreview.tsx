@@ -155,6 +155,8 @@ export function SetlistPreview() {
                         fontSize: `${Math.max(18, dimensions.height * 0.03)}px`,
                         color: "black", fontWeight: "600", textAlign: "center",
                         fontFamily: "sans-serif", lineHeight: "1.2",
+                        paddingRight: `${Math.max(40, dimensions.width * 0.1)}px`,
+                        paddingLeft: `${Math.max(40, dimensions.width * 0.1)}px`,
                       }}
                     >
                       <span style={{ color: "#888", fontWeight: "400", marginRight: "8px" }}>
