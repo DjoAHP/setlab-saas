@@ -150,7 +150,6 @@ export function SetlistEditor() {
   }, []);
 
   const handleTouchMoveOrdre = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
     const touch = e.touches[0];
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
     if (!el) return;
