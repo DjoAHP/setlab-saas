@@ -33,8 +33,8 @@ function AppContent() {
           }}
         >
           {[
-            { key: "editor", label: "diteur" },
-            { key: "preview", label: "Aperu" },
+{ key: "editor", label: "Éditeur" },
+          { key: "preview", label: "Aperçu" },
             { key: "chrono", label: "Chrono" },
           ].map((tab) => (
             <button
