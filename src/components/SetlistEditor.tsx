@@ -357,19 +357,23 @@ export function SetlistEditor() {
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, song.id)}
                   onDragEnd={handleDragEnd}
-                  onTouchStart={(e) => handleTouchStart(e, song.id)}
-                  onTouchMove={(e) => handleTouchMove(e, song.id)}
-                  onTouchEnd={handleTouchEnd}
                 >
-                  {/* Icône drag */}
-                  <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor" style={{ color: "hsl(220, 15%, 30%)", flexShrink: 0 }}>
-                    <circle cx="2" cy="2" r="1" />
-                    <circle cx="6" cy="2" r="1" />
-                    <circle cx="2" cy="6" r="1" />
-                    <circle cx="6" cy="6" r="1" />
-                    <circle cx="2" cy="10" r="1" />
-                    <circle cx="6" cy="10" r="1" />
-                  </svg>
+                  {/* Icône drag (seule zone tactile pour le glisser sur mobile) */}
+                  <div
+                    onTouchStart={(e) => { e.stopPropagation(); handleTouchStart(e, song.id); }}
+                    onTouchMove={(e) => { e.stopPropagation(); handleTouchMove(e, song.id); }}
+                    onTouchEnd={(e) => { e.stopPropagation(); handleTouchEnd(); }}
+                    style={{ touchAction: "none", display: "flex", alignItems: "center", cursor: "grab" }}
+                  >
+                    <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor" style={{ color: "hsl(220, 15%, 30%)", flexShrink: 0 }}>
+                      <circle cx="2" cy="2" r="1" />
+                      <circle cx="6" cy="2" r="1" />
+                      <circle cx="2" cy="6" r="1" />
+                      <circle cx="6" cy="6" r="1" />
+                      <circle cx="2" cy="10" r="1" />
+                      <circle cx="6" cy="10" r="1" />
+                    </svg>
+                  </div>
 
                   {/* Tonalité */}
                   <select
