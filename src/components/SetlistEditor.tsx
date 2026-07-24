@@ -299,14 +299,7 @@ export function SetlistEditor() {
                 }}
                 title="Réordonner les morceaux"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <line x1="3" y1="4" x2="13" y2="4" />
-                  <line x1="3" y1="8" x2="13" y2="8" />
-                  <line x1="3" y1="12" x2="13" y2="12" />
-                  <circle cx="1.5" cy="4" r="1" fill="currentColor" stroke="none" />
-                  <circle cx="1.5" cy="8" r="1" fill="currentColor" stroke="none" />
-                  <circle cx="1.5" cy="12" r="1" fill="currentColor" stroke="none" />
-                </svg>
+                <img src="/assets/ordre.svg" alt="Ordre" width="16" height="16" style={{ filter: "brightness(0) invert(0.6)" }} />
               </button>
             </div>
             {stageEnabled && (
