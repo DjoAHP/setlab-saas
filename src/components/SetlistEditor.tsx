@@ -169,8 +169,7 @@ export function SetlistEditor() {
     <div
       className="flex flex-col h-full flex-shrink-0"
       style={{
-        width: "280px",
-        flexShrink: 0,
+        width: "100%",
         height: "100%",
         background: "hsl(222, 20%, 11%)",
         borderRight: "1px solid hsl(220, 15%, 18%)",

@@ -52,7 +52,7 @@ export function ChronoPanel() {
   return (
     <div
       style={{
-        width: "320px", flexShrink: 0, height: "100%",
+        width: "100%", height: "100%",
         background: "hsl(222, 20%, 11%)",
         borderLeft: "1px solid hsl(220, 15%, 18%)",
         display: "flex", flexDirection: "column", overflow: "hidden",
@@ -69,7 +69,7 @@ export function ChronoPanel() {
         {/* Cercle LED compact */}
         <div
           style={{
-            width: "200px", height: "200px", borderRadius: "50%",
+            width: "min(200px, 70vw)", height: "min(200px, 70vw)", borderRadius: "50%",
             border: "3px solid hsl(220, 15%, 25%)",
             display: "flex", alignItems: "center", justifyContent: "center",
             background: "hsl(222, 20%, 10%)",
@@ -80,14 +80,14 @@ export function ChronoPanel() {
           <div
             style={{
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "monospace", fontWeight: 700, fontSize: "48px",
+              fontFamily: "monospace", fontWeight: 700, fontSize: "min(48px, 16vw)",
               letterSpacing: "2px", color: "hsl(var(--tl-accent-text))",
               textShadow: "0 0 6px hsl(var(--tl-accent-text)), 0 0 12px hsl(var(--tl-accent-text) / 0.6)",
               fontVariantNumeric: "tabular-nums",
             }}
           >
             <span>{display.minutes.toString().padStart(2, "0")}</span>
-            <span style={{ fontSize: "48px", margin: "0 1px" }}>:</span>
+            <span style={{ fontSize: "min(48px, 16vw)", margin: "0 1px" }}>:</span>
             <span>{display.seconds.toString().padStart(2, "0")}</span>
           </div>
         </div>
