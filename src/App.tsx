@@ -2,12 +2,16 @@ import { SetlabProvider, useSetlab } from "./context/SetlabContext";
 import { SetlistEditor } from "./components/SetlistEditor";
 import { SetlistPreview } from "./components/SetlistPreview";
 import { ChronoPanel } from "./components/ChronoPanel";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 function AppContent() {
   const { loading } = useSetlab();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [mobileTab, setMobileTab] = useState<"editor" | "preview" | "chrono">("editor");
+  const [editorWidth, setEditorWidth] = useState(320);
+  const enTrainDeRedimensionner = useRef(false);
+  const xDepart = useRef(0);
+  const largeurDepart = useRef(0);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -23,6 +27,29 @@ function AppContent() {
     };
     window.addEventListener("setlab-export-pdf", onExport);
     return () => window.removeEventListener("setlab-export-pdf", onExport);
+  }, []);
+
+  // ── Redimensionnement sidebar éditeur ──────────────────────
+  const demarrerRedim = useCallback((e: React.MouseEvent) => {
+    enTrainDeRedimensionner.current = true;
+    xDepart.current = e.clientX;
+    largeurDepart.current = editorWidth;
+    e.preventDefault();
+  }, [editorWidth]);
+
+  useEffect(() => {
+    const surMouvement = (e: MouseEvent) => {
+      if (!enTrainDeRedimensionner.current) return;
+      const delta = e.clientX - xDepart.current;
+      setEditorWidth(Math.min(Math.max(largeurDepart.current + delta, 200), 450));
+    };
+    const surRelachement = () => { enTrainDeRedimensionner.current = false; };
+    document.addEventListener("mousemove", surMouvement);
+    document.addEventListener("mouseup", surRelachement);
+    return () => {
+      document.removeEventListener("mousemove", surMouvement);
+      document.removeEventListener("mouseup", surRelachement);
+    };
   }, []);
 
   if (loading) {
@@ -75,8 +102,14 @@ function AppContent() {
 
   return (
     <div style={{ display: "flex", flexDirection: "row", height: "100%", width: "100%", overflow: "hidden" }}>
-      <div style={{ width: "280px", flexShrink: 0, height: "100%" }}>
+      <div style={{ width: `${editorWidth}px`, flexShrink: 0, height: "100%", position: "relative" }}>
         <SetlistEditor />
+        <div
+          onMouseDown={demarrerRedim}
+          style={{ position: "absolute", top: 0, right: 0, width: "4px", height: "100%", cursor: "col-resize", zIndex: 10, background: "transparent" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "hsl(var(--tl-accent-border) / 0.3)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
+        />
       </div>
       <div style={{ flex: 1, minWidth: 0, height: "100%", display: "flex", flexDirection: "column" }}>
         <SetlistPreview />
