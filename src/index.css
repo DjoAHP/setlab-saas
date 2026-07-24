@@ -14,7 +14,6 @@ body {
 #root > div {
   height: 100vh;
   display: flex;
-  flex-direction: column;
 }
 
 @layer base {
