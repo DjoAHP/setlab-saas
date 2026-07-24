@@ -131,8 +131,8 @@ export function SetlistPreview() {
                   style={{
                     flex: 1, display: "flex", alignItems: "center",
                     borderBottom: song.position < songCount ? "2px solid #ccc" : "none",
-                    minHeight: 0, paddingLeft: `${Math.max(10, dimensions.width * 0.02)}px`,
-                    paddingRight: `${Math.max(20, dimensions.width * 0.05)}px`,
+                    minHeight: 0, paddingLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
+                    paddingRight: `${Math.max(8, dimensions.width * 0.015)}px`,
                   }}
                 >
                   {/* Tonalité (gauche) */}
@@ -140,9 +140,9 @@ export function SetlistPreview() {
                     <span
                       style={{
                         flexShrink: 0,
-                        fontSize: `${Math.max(14, dimensions.height * 0.022)}px`,
+                        fontSize: `${Math.max(12, dimensions.height * 0.018)}px`,
                         color: "#666", fontFamily: "monospace", fontStyle: "italic",
-                        marginRight: `${Math.max(8, dimensions.width * 0.015)}px`,
+                        marginRight: `${Math.max(6, dimensions.width * 0.01)}px`,
                       }}
                     >
                       ({song.tonalite})
@@ -152,13 +152,14 @@ export function SetlistPreview() {
                   <span
                     style={{
                       flex: 1, textAlign: "center",
-                      fontSize: `${Math.max(18, dimensions.height * 0.03)}px`,
+                      fontSize: `${Math.max(14, dimensions.height * 0.025)}px`,
                       color: "black", fontWeight: "600",
                       fontFamily: "sans-serif", lineHeight: "1.2",
-                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      overflow: "visible", whiteSpace: "normal",
+                      wordBreak: "break-word",
                     }}
                   >
-                    <span style={{ color: "#888", fontWeight: "400", marginRight: "6px" }}>
+                    <span style={{ color: "#888", fontWeight: "400", marginRight: "4px", fontSize: `${Math.max(11, dimensions.height * 0.02)}px` }}>
                       {song.position.toString().padStart(2, '0')}.
                     </span>
                     {song.title}
@@ -167,8 +168,8 @@ export function SetlistPreview() {
                   {song.time !== undefined && (
                     <span
                       style={{
-                        flexShrink: 0, marginLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
-                        fontSize: `${Math.max(12, dimensions.height * 0.02)}px`,
+                        flexShrink: 0, marginLeft: `${Math.max(6, dimensions.width * 0.01)}px`,
+                        fontSize: `${Math.max(11, dimensions.height * 0.018)}px`,
                         color: "#888", fontFamily: "monospace",
                       }}
                     >
