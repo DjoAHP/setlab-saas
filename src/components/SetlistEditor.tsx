@@ -185,8 +185,8 @@ export function SetlistEditor() {
       </div>
 
       {/* Zone défilable */}
-      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
-        <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "10px", minHeight: 0, minWidth: 0 }}>
           {/* Input Band Name */}
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
             <label style={{ fontSize: "11px", color: "hsl(220, 15%, 50%)" }}>Groupe</label>
