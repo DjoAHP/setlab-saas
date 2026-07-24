@@ -294,12 +294,19 @@ export function SetlistEditor() {
                 onClick={() => setOrdreModalOuverte(true)}
                 style={{
                   background: "hsl(222, 18%, 17%)", border: "1px solid hsl(220, 15%, 22%)",
-                  color: "hsl(220, 15%, 50%)", padding: "6px 10px", borderRadius: "6px",
-                  fontSize: "11px", cursor: "pointer", whiteSpace: "nowrap",
+                  color: "hsl(220, 15%, 50%)", padding: "6px", borderRadius: "6px",
+                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
                 }}
                 title="Réordonner les morceaux"
               >
-                Ordre
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <line x1="3" y1="4" x2="13" y2="4" />
+                  <line x1="3" y1="8" x2="13" y2="8" />
+                  <line x1="3" y1="12" x2="13" y2="12" />
+                  <circle cx="1.5" cy="4" r="1" fill="currentColor" stroke="none" />
+                  <circle cx="1.5" cy="8" r="1" fill="currentColor" stroke="none" />
+                  <circle cx="1.5" cy="12" r="1" fill="currentColor" stroke="none" />
+                </svg>
               </button>
             </div>
             {stageEnabled && (

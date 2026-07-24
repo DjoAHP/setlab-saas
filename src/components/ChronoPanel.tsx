@@ -8,6 +8,8 @@ export function ChronoPanel() {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [display, setDisplay] = useState({ minutes: 0, seconds: 0 });
   const [selectedSongId, setSelectedSongId] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastSong, setToastSong] = useState("");
 
   useEffect(() => {
     const listener = (state: any) => {
@@ -31,13 +33,17 @@ export function ChronoPanel() {
     return () => document.removeEventListener("keydown", onKey);
   }, [isRunning]);
 
+  const songs = [...(setlist?.songs ?? [])].sort((a, b) => a.position - b.position);
+
   const handleTransfert = useCallback(() => {
     if (!selectedSongId || elapsedMs === 0) return;
     const newTime = Math.floor(elapsedMs / 1000);
     updateSong(selectedSongId, { time: newTime });
-  }, [selectedSongId, elapsedMs, updateSong]);
-
-  const songs = [...(setlist?.songs ?? [])].sort((a, b) => a.position - b.position);
+    const song = songs.find((s) => s.id === selectedSongId);
+    setToastSong(song?.title ?? "");
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2000);
+  }, [selectedSongId, elapsedMs, updateSong, songs]);
 
   const formatMs = (ms: number) => {
     const totalSec = Math.floor(ms / 1000);
@@ -167,6 +173,19 @@ export function ChronoPanel() {
             Appliquer le temps
           </button>
         </div>
+      </div>
+
+      {/* Toast confirmation */}
+      <div
+        style={{
+          position: "fixed", bottom: "80px", left: "50%", transform: "translateX(-50%)",
+          background: "hsl(var(--tl-accent-button))", color: "white",
+          padding: "8px 16px", borderRadius: "8px", fontSize: "12px",
+          opacity: toastVisible ? 1 : 0, transition: "opacity 0.3s",
+          pointerEvents: "none", zIndex: 200, whiteSpace: "nowrap",
+        }}
+      >
+        ✓ Temps ajouté à « {toastSong} »
       </div>
     </div>
   );
