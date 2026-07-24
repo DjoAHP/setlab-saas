@@ -130,48 +130,46 @@ export function SetlistPreview() {
                   key={song.id}
                   style={{
                     flex: 1, display: "flex", alignItems: "center",
-                    justifyContent: "center", position: "relative",
                     borderBottom: song.position < songCount ? "2px solid #ccc" : "none",
-                    minHeight: 0,
+                    minHeight: 0, paddingLeft: `${Math.max(10, dimensions.width * 0.02)}px`,
+                    paddingRight: `${Math.max(20, dimensions.width * 0.05)}px`,
                   }}
                 >
-                  <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
-                    {/* Tonalité (gauche) */}
-                    {song.tonalite !== undefined && (
-                      <span
-                        style={{
-                          position: "absolute", left: `${Math.max(10, dimensions.width * 0.02)}px`,
-                          top: "50%", transform: "translateY(-50%)",
-                          fontSize: `${Math.max(14, dimensions.height * 0.022)}px`,
-                          color: "#666", fontFamily: "monospace", fontStyle: "italic",
-                        }}
-                      >
-                        ({song.tonalite})
-                      </span>
-                    )}
-                    {/* Numéro + Titre */}
+                  {/* Tonalité (gauche) */}
+                  {song.tonalite !== undefined && (
                     <span
                       style={{
-                        fontSize: `${Math.max(18, dimensions.height * 0.03)}px`,
-                        color: "black", fontWeight: "600", textAlign: "center",
-                        fontFamily: "sans-serif", lineHeight: "1.2",
-                        paddingRight: `${Math.max(40, dimensions.width * 0.1)}px`,
-                        paddingLeft: `${Math.max(40, dimensions.width * 0.1)}px`,
+                        flexShrink: 0,
+                        fontSize: `${Math.max(14, dimensions.height * 0.022)}px`,
+                        color: "#666", fontFamily: "monospace", fontStyle: "italic",
+                        marginRight: `${Math.max(8, dimensions.width * 0.015)}px`,
                       }}
                     >
-                      <span style={{ color: "#888", fontWeight: "400", marginRight: "8px" }}>
-                        {song.position.toString().padStart(2, '0')}.
-                      </span>
-                      {song.title}
+                      ({song.tonalite})
                     </span>
-                  </div>
+                  )}
+                  {/* Numéro + Titre (centre, prend l'espace restant) */}
+                  <span
+                    style={{
+                      flex: 1, textAlign: "center",
+                      fontSize: `${Math.max(18, dimensions.height * 0.03)}px`,
+                      color: "black", fontWeight: "600",
+                      fontFamily: "sans-serif", lineHeight: "1.2",
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}
+                  >
+                    <span style={{ color: "#888", fontWeight: "400", marginRight: "6px" }}>
+                      {song.position.toString().padStart(2, '0')}.
+                    </span>
+                    {song.title}
+                  </span>
                   {/* Durée (droite) */}
                   {song.time !== undefined && (
                     <span
                       style={{
-                        position: "absolute", right: `${Math.max(20, dimensions.width * 0.05)}px`,
+                        flexShrink: 0, marginLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
                         fontSize: `${Math.max(12, dimensions.height * 0.02)}px`,
-                        color: "#888", fontFamily: "monospace", flexShrink: 0,
+                        color: "#888", fontFamily: "monospace",
                       }}
                     >
                       {formatTime(song.time)}
