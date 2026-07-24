@@ -34,6 +34,8 @@ export function SetlistEditor() {
   const [stageEnabled, setStageEnabled] = useState(false);
 
   const dragItemId = useRef<string | null>(null);
+  const touchDragId = useRef<string | null>(null);
+  const touchStartY = useRef(0);
   const [draggedSongId, setDraggedSongId] = useState<string | null>(null);
   const [dragOverSongId, setDragOverSongId] = useState<string | null>(null);
 
@@ -129,6 +131,39 @@ export function SetlistEditor() {
     setDragOverSongId(null);
     dragItemId.current = null;
   }, []);
+
+  // ── Touch drag & drop (mobile) ──────────────────────────
+  const handleTouchStart = useCallback((e: React.TouchEvent, songId: string) => {
+    touchDragId.current = songId;
+    touchStartY.current = e.touches[0].clientY;
+    setDraggedSongId(songId);
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent, songId: string) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!target) return;
+    const songRow = (target as HTMLElement).closest("[data-song-id]");
+    if (songRow) {
+      const overId = songRow.getAttribute("data-song-id");
+      setDragOverSongId(overId);
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const sourceSongId = touchDragId.current;
+    const targetSongId = dragOverSongId;
+    if (sourceSongId && targetSongId && sourceSongId !== targetSongId) {
+      const targetSong = songs.find((s) => s.id === targetSongId);
+      if (targetSong) {
+        reorderSong(sourceSongId, targetSong.position);
+      }
+    }
+    setDraggedSongId(null);
+    setDragOverSongId(null);
+    touchDragId.current = null;
+  }, [dragOverSongId, songs, reorderSong]);
 
   const handleImporter = useCallback(() => {
     const input = document.createElement("input");
@@ -305,6 +340,7 @@ export function SetlistEditor() {
                 <div
                   key={song.id}
                   draggable="true"
+                  data-song-id={song.id}
                   style={{
                     display: "flex", alignItems: "center", gap: "6px",
                     padding: "6px 8px", borderRadius: "6px",
@@ -321,6 +357,9 @@ export function SetlistEditor() {
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, song.id)}
                   onDragEnd={handleDragEnd}
+                  onTouchStart={(e) => handleTouchStart(e, song.id)}
+                  onTouchMove={(e) => handleTouchMove(e, song.id)}
+                  onTouchEnd={handleTouchEnd}
                 >
                   {/* Icône drag */}
                   <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor" style={{ color: "hsl(220, 15%, 30%)", flexShrink: 0 }}>
