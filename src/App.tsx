@@ -63,7 +63,7 @@ function AppContent() {
   }
 
   return (
-    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+    <div style={{ display: "flex", flexDirection: "row", height: "100%", overflow: "hidden" }}>
       <SetlistEditor />
       <SetlistPreview />
       <ChronoPanel />
