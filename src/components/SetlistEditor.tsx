@@ -8,17 +8,17 @@ const TONALITES = [
 ];
 
 const timeSelectStyle: React.CSSProperties = {
-  width: "46px",
-  background: "hsl(222, 18%, 14%)",
-  border: "1px solid hsl(220, 15%, 22%)",
-  borderRadius: "4px",
-  color: "hsl(220, 15%, 50%)",
-  fontSize: "11px",
-  padding: "2px 2px",
-  textAlign: "center",
-  flexShrink: 0,
-  cursor: "pointer",
-};
+    width: "58px",
+    background: "hsl(222, 18%, 14%)",
+    border: "1px solid hsl(220, 15%, 22%)",
+    borderRadius: "4px",
+    color: "hsl(220, 15%, 50%)",
+    fontSize: "11px",
+    padding: "2px 4px",
+    textAlign: "center",
+    flexShrink: 0,
+    cursor: "pointer",
+  };
 
 export function SetlistEditor() {
   const {
