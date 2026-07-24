@@ -4,7 +4,8 @@ import { useRef, useEffect, useState, useCallback } from "react";
 export function SetlistPreview() {
   const { setlist } = useSetlab();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 794, height: 1123 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [ready, setReady] = useState(false);
 
   const songs = [...(setlist?.songs ?? [])].sort((a, b) => a.position - b.position);
   const songCount = songs.length;
@@ -52,6 +53,7 @@ export function SetlistPreview() {
       newHeight = newHeight * ratio;
     }
     setDimensions({ width: Math.floor(newWidth), height: Math.floor(newHeight) });
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -63,6 +65,14 @@ export function SetlistPreview() {
     return () => resizeObserver.disconnect();
   }, [calculerDimensions]);
 
+  if (!ready) {
+    return (
+      <div
+        ref={containerRef}
+        style={{ flex: 1, minWidth: 0, overflow: "auto", background: "hsl(222, 22%, 9%)" }}
+      />
+    );
+  }
   return (
     <div
       ref={containerRef}

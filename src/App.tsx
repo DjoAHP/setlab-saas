@@ -53,7 +53,7 @@ function AppContent() {
           ))}
         </div>
 
-        <div style={{ flex: 1, minHeight: 0 }}>
+        <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", flexDirection: "column" }}>
           {mobileTab === "editor" && <SetlistEditor />}
           {mobileTab === "preview" && <SetlistPreview />}
           {mobileTab === "chrono" && <ChronoPanel />}
