@@ -38,6 +38,7 @@ export function SetlistEditor() {
   const dragItemId = useRef<string | null>(null);
   const [draggedSongId, setDraggedSongId] = useState<string | null>(null);
   const [dragOverSongId, setDragOverSongId] = useState<string | null>(null);
+  const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(null);
   const touchDragId = useRef<string | null>(null);
   const touchStartY = useRef(0);
   const touchOrdreRef = useRef<HTMLDivElement | null>(null);
@@ -147,10 +148,15 @@ export function SetlistEditor() {
     const touch = e.touches[0];
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
     if (!el) return;
-    const row = (el as HTMLElement).closest("[data-order-id]");
+    const row = (el as HTMLElement).closest("[data-order-id]") as HTMLElement | null;
     if (row) {
       const overId = row.getAttribute("data-order-id");
       setDragOverSongId(overId);
+      const rect = row.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      setDropPosition(touch.clientY < midY ? "before" : "after");
+    } else {
+      setDropPosition(null);
     }
   }, []);
 
@@ -159,12 +165,14 @@ export function SetlistEditor() {
     const tgtId = dragOverSongId;
     if (srcId && tgtId && srcId !== tgtId) {
       const tgt = songs.find((s) => s.id === tgtId);
-      if (tgt) reorderSong(srcId, tgt.position);
+      const pos = dropPosition === "before" ? (tgt?.position ?? 1) : Math.min((tgt?.position ?? 1) + 1, songs.length);
+      if (tgt) reorderSong(srcId, pos);
     }
     setDraggedSongId(null);
     setDragOverSongId(null);
+    setDropPosition(null);
     touchDragId.current = null;
-  }, [dragOverSongId, songs, reorderSong]);
+  }, [dragOverSongId, dropPosition, songs, reorderSong]);
 
   // ESC pour fermer les modales
   useEffect(() => {
@@ -530,8 +538,11 @@ export function SetlistEditor() {
               <span style={{ color: "hsl(210, 30%, 90%)", fontSize: "14px", fontWeight: 600 }}>Ordre des morceaux</span>
               <button onClick={() => setOrdreModalOuverte(false)} style={{ background: "none", border: "none", color: "hsl(220, 15%, 45%)", cursor: "pointer", fontSize: "16px" }}>✕</button>
             </div>
-            <div ref={touchOrdreRef} style={{ overflowY: "auto", flex: 1, padding: "8px 0" }}>
-              {songs.map((song, index) => (
+            <div ref={touchOrdreRef} style={{ overflowY: "auto", flex: 1, padding: "8px 0", position: "relative" }}>
+              {songs.map((song, index) => {
+                const isBefore = dragOverSongId === song.id && dropPosition === "before" && draggedSongId !== song.id;
+                const isAfter = dragOverSongId === song.id && dropPosition === "after" && draggedSongId !== song.id;
+                return (
                 <div
                   key={song.id}
                   data-order-id={song.id}
@@ -539,10 +550,13 @@ export function SetlistEditor() {
                   style={{
                     display: "flex", alignItems: "center", gap: "8px",
                     padding: "12px 16px",
-                    borderBottom: index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
                     cursor: "grab",
-                    background: dragOverSongId === song.id ? "rgba(255,255,255,0.05)" : "transparent",
+                    background: draggedSongId === song.id ? "rgba(255,255,255,0.02)" : "transparent",
+                    opacity: draggedSongId === song.id ? 0.4 : 1,
                     touchAction: "none",
+                    position: "relative",
+                    borderTop: isBefore ? "2px solid hsl(var(--tl-accent-button-border))" : "2px solid transparent",
+                    borderBottom: isAfter ? "2px solid hsl(var(--tl-accent-button-border))" : index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
                   }}
                   onDragStart={(e) => handleDragStart(e, song.id)}
                   onDragOver={(e) => handleDragOver(e, song.id)}
@@ -561,14 +575,15 @@ export function SetlistEditor() {
                     <circle cx="2" cy="10" r="1.2" />
                     <circle cx="6" cy="10" r="1.2" />
                   </svg>
-                  <span style={{ color: "hsl(220, 15%, 40%)", fontSize: "12px", fontFamily: "monospace", flexShrink: 0, width: "24px" }}>
+                  <span style={{ color: "hsl(220, 15%, 40%)", fontSize: "13px", fontFamily: "monospace", flexShrink: 0, width: "28px" }}>
                     {song.position.toString().padStart(2, '0')}.
                   </span>
-                  <span style={{ flex: 1, color: "hsl(210, 30%, 85%)", fontSize: "13px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ flex: 1, color: "hsl(210, 30%, 85%)", fontSize: "14px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {song.title}
                   </span>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
