@@ -83,7 +83,7 @@ export function SetlistPreview() {
           display: "flex", justifyContent: "center", alignItems: "center",
           width: "100%", minHeight: "100%", padding: "8px 16px",
         }}
-      >
+        >
         {/* FEUILLE A4 */}
         <div
           className="setlist-a4-container"
@@ -91,31 +91,31 @@ export function SetlistPreview() {
             width: `${dimensions.width}px`, height: `${dimensions.height}px`,
             background: "white", borderRadius: "4px",
             boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-            padding: `${Math.max(20, dimensions.height * 0.03)}px ${Math.max(30, dimensions.width * 0.06)}px`,
+            padding: `${Math.max(30, dimensions.height * 0.04)}px ${Math.max(40, dimensions.width * 0.08)}px`,
             display: "flex", flexDirection: "column", overflow: "hidden", flexShrink: 0,
           }}
         >
           {/* Band Name */}
           <h1
             style={{
-              textAlign: "center", fontSize: `${Math.max(24, dimensions.height * 0.04)}px`,
-              fontWeight: "bold", color: "black", marginBottom: `${Math.max(10, dimensions.height * 0.015)}px`,
-              fontFamily: "serif", flexShrink: 0,
+              textAlign: "center", fontSize: `${Math.max(32, dimensions.height * 0.055)}px`,
+              fontWeight: "bold", color: "black", marginBottom: `${Math.max(12, dimensions.height * 0.02)}px`,
+              fontFamily: "serif", flexShrink: 0, letterSpacing: "0.02em",
             }}
           >
             {setlist?.bandName || "Nom du groupe"}
           </h1>
 
           {/* Séparation */}
-          <div style={{ margin: `0 0 ${Math.max(10, dimensions.height * 0.015)}px 0`, flexShrink: 0 }}>
-            <div style={{ height: "2px", background: "black" }} />
+          <div style={{ margin: `0 0 ${Math.max(12, dimensions.height * 0.02)}px 0`, flexShrink: 0 }}>
+            <div style={{ height: "3px", background: "black" }} />
           </div>
 
           {/* Nombre de morceaux */}
           <div
             style={{
-              textAlign: "center", fontSize: `${Math.max(10, dimensions.height * 0.012)}px`,
-              color: "#888", marginBottom: `${Math.max(10, dimensions.height * 0.015)}px`,
+              textAlign: "center", fontSize: `${Math.max(14, dimensions.height * 0.018)}px`,
+              color: "#888", marginBottom: `${Math.max(12, dimensions.height * 0.02)}px`,
               flexShrink: 0,
             }}
           >
@@ -131,8 +131,8 @@ export function SetlistPreview() {
                   style={{
                     flex: 1, display: "flex", alignItems: "center",
                     borderBottom: song.position < songCount ? "2px solid #ccc" : "none",
-                    minHeight: 0, paddingLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
-                    paddingRight: `${Math.max(8, dimensions.width * 0.015)}px`,
+                    minHeight: 0, paddingLeft: `${Math.max(6, dimensions.width * 0.01)}px`,
+                    paddingRight: `${Math.max(6, dimensions.width * 0.01)}px`,
                   }}
                 >
                   {/* Tonalité (gauche) */}
@@ -140,9 +140,9 @@ export function SetlistPreview() {
                     <span
                       style={{
                         flexShrink: 0,
-                        fontSize: `${Math.max(12, dimensions.height * 0.018)}px`,
+                        fontSize: `${Math.max(16, dimensions.height * 0.028)}px`,
                         color: "#666", fontFamily: "monospace", fontStyle: "italic",
-                        marginRight: `${Math.max(6, dimensions.width * 0.01)}px`,
+                        marginRight: `${Math.max(8, dimensions.width * 0.015)}px`,
                       }}
                     >
                       ({song.tonalite})
@@ -152,14 +152,14 @@ export function SetlistPreview() {
                   <span
                     style={{
                       flex: 1, textAlign: "center",
-                      fontSize: `${Math.max(14, dimensions.height * 0.025)}px`,
+                      fontSize: `${Math.max(22, dimensions.height * 0.038)}px`,
                       color: "black", fontWeight: "600",
-                      fontFamily: "sans-serif", lineHeight: "1.2",
+                      fontFamily: "sans-serif", lineHeight: "1.3",
                       overflow: "visible", whiteSpace: "normal",
                       wordBreak: "break-word",
                     }}
                   >
-                    <span style={{ color: "#888", fontWeight: "400", marginRight: "4px", fontSize: `${Math.max(11, dimensions.height * 0.02)}px` }}>
+                    <span style={{ color: "#888", fontWeight: "400", marginRight: "6px", fontSize: `${Math.max(16, dimensions.height * 0.028)}px` }}>
                       {song.position.toString().padStart(2, '0')}.
                     </span>
                     {song.title}
@@ -168,9 +168,9 @@ export function SetlistPreview() {
                   {song.time !== undefined && (
                     <span
                       style={{
-                        flexShrink: 0, marginLeft: `${Math.max(6, dimensions.width * 0.01)}px`,
-                        fontSize: `${Math.max(11, dimensions.height * 0.018)}px`,
-                        color: "#888", fontFamily: "monospace",
+                        flexShrink: 0, marginLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
+                        fontSize: `${Math.max(16, dimensions.height * 0.028)}px`,
+                        color: "#888", fontFamily: "monospace", fontWeight: "500",
                       }}
                     >
                       {formatTime(song.time)}
@@ -182,7 +182,7 @@ export function SetlistPreview() {
               <div
                 style={{
                   flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#999", fontSize: `${Math.max(14, dimensions.height * 0.015)}px`,
+                  color: "#999", fontSize: `${Math.max(18, dimensions.height * 0.025)}px`,
                   fontStyle: "italic",
                 }}
               >
@@ -195,14 +195,14 @@ export function SetlistPreview() {
           {songCount > 0 && (
             <div
               style={{
-                textAlign: "center", fontSize: `${Math.max(12, dimensions.height * 0.014)}px`,
-                color: getTempsCouleur(), padding: `${Math.max(8, dimensions.height * 0.01)}px 0`,
-                borderTop: "1px solid #eee", flexShrink: 0,
+                textAlign: "center", fontSize: `${Math.max(16, dimensions.height * 0.022)}px`,
+                color: getTempsCouleur(), padding: `${Math.max(12, dimensions.height * 0.015)}px 0`,
+                borderTop: "2px solid #ccc", flexShrink: 0, fontWeight: "500",
               }}
             >
               Temps total : {formatTime(tempsTotal)}
               {setlist?.stageTimeLimit != null && (
-                <span style={{ color: "#888", fontSize: `${Math.max(10, dimensions.height * 0.011)}px`, marginLeft: "8px" }}>
+                <span style={{ color: "#888", fontSize: `${Math.max(14, dimensions.height * 0.018)}px`, marginLeft: "8px" }}>
                   / {formatTime(setlist.stageTimeLimit)}
                 </span>
               )}
