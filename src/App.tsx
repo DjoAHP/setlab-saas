@@ -26,9 +26,16 @@ function AppContent() {
   if (isMobile) {
     return (
       <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", overflow: "hidden" }}>
+        <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", flexDirection: "column" }}>
+          {mobileTab === "editor" && <SetlistEditor />}
+          {mobileTab === "preview" && <SetlistPreview />}
+          {mobileTab === "chrono" && <ChronoPanel />}
+        </div>
+
         <div
           style={{
-            display: "flex", width: "100%", borderBottom: "1px solid hsl(220, 15%, 18%)",
+            display: "flex", width: "100%",
+            borderTop: "1px solid hsl(220, 15%, 18%)",
             background: "hsl(222, 20%, 11%)", flexShrink: 0,
           }}
         >
@@ -45,18 +52,12 @@ function AppContent() {
                 background: mobileTab === tab.key ? "hsl(222, 18%, 16%)" : "transparent",
                 color: mobileTab === tab.key ? "hsl(var(--tl-accent-princ))" : "hsl(220, 15%, 50%)",
                 fontSize: "12px", fontWeight: 600, cursor: "pointer",
-                borderBottom: mobileTab === tab.key ? "2px solid hsl(var(--tl-accent-border))" : "2px solid transparent",
+                borderTop: mobileTab === tab.key ? "2px solid hsl(var(--tl-accent-border))" : "2px solid transparent",
               }}
             >
               {tab.label}
             </button>
           ))}
-        </div>
-
-        <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", flexDirection: "column" }}>
-          {mobileTab === "editor" && <SetlistEditor />}
-          {mobileTab === "preview" && <SetlistPreview />}
-          {mobileTab === "chrono" && <ChronoPanel />}
         </div>
       </div>
     );
