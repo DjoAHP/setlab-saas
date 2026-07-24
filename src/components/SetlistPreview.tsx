@@ -66,25 +66,25 @@ export function SetlistPreview() {
   return (
     <div
       ref={containerRef}
-      style={{
-        flex: 1, minWidth: 0,
-        display: "flex", justifyContent: "center", alignItems: "center",
-        padding: "8px 16px",
-        overflow: "auto",
-        background: "hsl(222, 22%, 9%)",
-      }}
+      style={{ flex: 1, minWidth: 0, overflow: "auto", background: "hsl(222, 22%, 9%)" }}
     >
-      {/* FEUILLE A4 */}
       <div
-        className="setlist-a4-container"
         style={{
-          width: `${dimensions.width}px`, height: `${dimensions.height}px`,
-          background: "white", borderRadius: "4px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-          padding: `${Math.max(20, dimensions.height * 0.03)}px ${Math.max(30, dimensions.width * 0.06)}px`,
-          display: "flex", flexDirection: "column", overflow: "hidden", flexShrink: 0,
+          display: "flex", justifyContent: "center", alignItems: "center",
+          width: "100%", minHeight: "100%", padding: "8px 16px",
         }}
       >
+        {/* FEUILLE A4 */}
+        <div
+          className="setlist-a4-container"
+          style={{
+            width: `${dimensions.width}px`, height: `${dimensions.height}px`,
+            background: "white", borderRadius: "4px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            padding: `${Math.max(20, dimensions.height * 0.03)}px ${Math.max(30, dimensions.width * 0.06)}px`,
+            display: "flex", flexDirection: "column", overflow: "hidden", flexShrink: 0,
+          }}
+        >
           {/* Band Name */}
           <h1
             style={{
@@ -198,6 +198,7 @@ export function SetlistPreview() {
             </div>
           )}
         </div>
+      </div>
 
       {/* CSS PRINT */}
       <style>{`
