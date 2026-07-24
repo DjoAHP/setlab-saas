@@ -32,10 +32,9 @@ export function SetlistEditor() {
   const [stageMinutes, setStageMinutes] = useState("");
   const [stageSeconds, setStageSeconds] = useState("");
   const [stageEnabled, setStageEnabled] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const dragItemId = useRef<string | null>(null);
-  const touchDragId = useRef<string | null>(null);
-  const touchStartY = useRef(0);
   const [draggedSongId, setDraggedSongId] = useState<string | null>(null);
   const [dragOverSongId, setDragOverSongId] = useState<string | null>(null);
 
@@ -132,38 +131,28 @@ export function SetlistEditor() {
     dragItemId.current = null;
   }, []);
 
-  // ── Touch drag & drop (mobile) ──────────────────────────
-  const handleTouchStart = useCallback((e: React.TouchEvent, songId: string) => {
-    touchDragId.current = songId;
-    touchStartY.current = e.touches[0].clientY;
-    setDraggedSongId(songId);
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent, songId: string) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const target = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (!target) return;
-    const songRow = (target as HTMLElement).closest("[data-song-id]");
-    if (songRow) {
-      const overId = songRow.getAttribute("data-song-id");
-      setDragOverSongId(overId);
+  // ── Monter / descendre (mobile) ──────────────────────────
+  const handleMoveUp = useCallback((songId: string) => {
+    const idx = songs.findIndex((s) => s.id === songId);
+    if (idx > 0) {
+      reorderSong(songId, songs[idx - 1].position);
     }
-  }, []);
+  }, [songs, reorderSong]);
 
-  const handleTouchEnd = useCallback(() => {
-    const sourceSongId = touchDragId.current;
-    const targetSongId = dragOverSongId;
-    if (sourceSongId && targetSongId && sourceSongId !== targetSongId) {
-      const targetSong = songs.find((s) => s.id === targetSongId);
-      if (targetSong) {
-        reorderSong(sourceSongId, targetSong.position);
-      }
+  const handleMoveDown = useCallback((songId: string) => {
+    const idx = songs.findIndex((s) => s.id === songId);
+    if (idx < songs.length - 1) {
+      reorderSong(songId, songs[idx + 1].position);
     }
-    setDraggedSongId(null);
-    setDragOverSongId(null);
-    touchDragId.current = null;
-  }, [dragOverSongId, songs, reorderSong]);
+  }, [songs, reorderSong]);
+
+  // ESC pour fermer la confirmation
+  useEffect(() => {
+    if (!deleteConfirmId) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setDeleteConfirmId(null); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [deleteConfirmId]);
 
   const handleImporter = useCallback(() => {
     const input = document.createElement("input");
@@ -358,22 +347,19 @@ export function SetlistEditor() {
                   onDrop={(e) => handleDrop(e, song.id)}
                   onDragEnd={handleDragEnd}
                 >
-                  {/* Icône drag (seule zone tactile pour le glisser sur mobile) */}
-                  <div
-                    onTouchStart={(e) => { e.stopPropagation(); handleTouchStart(e, song.id); }}
-                    onTouchMove={(e) => { e.stopPropagation(); handleTouchMove(e, song.id); }}
-                    onTouchEnd={(e) => { e.stopPropagation(); handleTouchEnd(); }}
-                    style={{ touchAction: "none", display: "flex", alignItems: "center", cursor: "grab" }}
+                  {/* Supprimer (à gauche) */}
+                  <button
+                    onClick={() => setDeleteConfirmId(song.id)}
+                    style={{
+                      background: "none", border: "none", color: "hsl(220, 15%, 30%)",
+                      cursor: "pointer", padding: "2px 4px", fontSize: "12px", flexShrink: 0,
+                    }}
+                    onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; }}
+                    onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(220, 15%, 30%)"; }}
+                    title="Supprimer"
                   >
-                    <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor" style={{ color: "hsl(220, 15%, 30%)", flexShrink: 0 }}>
-                      <circle cx="2" cy="2" r="1" />
-                      <circle cx="6" cy="2" r="1" />
-                      <circle cx="2" cy="6" r="1" />
-                      <circle cx="6" cy="6" r="1" />
-                      <circle cx="2" cy="10" r="1" />
-                      <circle cx="6" cy="10" r="1" />
-                    </svg>
-                  </div>
+                    ×
+                  </button>
 
                   {/* Tonalité */}
                   <select
@@ -465,18 +451,31 @@ export function SetlistEditor() {
                     </div>
                   </div>
 
-                  {/* Supprimer */}
-                  <button
-                    onClick={() => deleteSong(song.id)}
-                    style={{
-                      background: "none", border: "none", color: "hsl(220, 15%, 30%)",
-                      cursor: "pointer", padding: "2px", fontSize: "10px",
-                    }}
-                    onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; }}
-                    onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.color = "hsl(220, 15%, 30%)"; }}
-                  >
-                    ×
-                  </button>
+                  {/* ▲ / ▼ (mobile) */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1px", flexShrink: 0 }}>
+                    <button
+                      onClick={() => handleMoveUp(song.id)}
+                      disabled={song.position <= 1}
+                      style={{
+                        background: "none", border: "none", color: song.position <= 1 ? "hsl(220, 15%, 20%)" : "hsl(220, 15%, 45%)",
+                        cursor: song.position <= 1 ? "default" : "pointer", padding: "0 2px", lineHeight: "1", fontSize: "10px",
+                      }}
+                      title="Monter"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      onClick={() => handleMoveDown(song.id)}
+                      disabled={song.position >= songs.length}
+                      style={{
+                        background: "none", border: "none", color: song.position >= songs.length ? "hsl(220, 15%, 20%)" : "hsl(220, 15%, 45%)",
+                        cursor: song.position >= songs.length ? "default" : "pointer", padding: "0 2px", lineHeight: "1", fontSize: "10px",
+                      }}
+                      title="Descendre"
+                    >
+                      ▼
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -513,6 +512,51 @@ export function SetlistEditor() {
           Exporter PDF
         </button>
       </div>
+
+      {/* Confirmation suppression */}
+      {deleteConfirmId && (
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 100,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: "rgba(10, 12, 20, 0.82)", backdropFilter: "blur(4px)",
+          }}
+          onClick={() => setDeleteConfirmId(null)}
+        >
+          <div
+            style={{
+              background: "hsl(222, 22%, 12%)", border: "1px solid hsl(220, 15%, 22%)",
+              borderRadius: "12px", padding: "24px", width: "280px",
+              display: "flex", flexDirection: "column", gap: "16px",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ color: "hsl(210, 30%, 90%)", fontSize: "14px", fontWeight: 600, textAlign: "center" }}>
+              Supprimer ce morceau ?
+            </div>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                style={{
+                  flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid hsl(220, 15%, 24%)",
+                  background: "hsl(222, 18%, 18%)", color: "hsl(220, 15%, 60%)", fontSize: "13px", cursor: "pointer",
+                }}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => { deleteSong(deleteConfirmId); setDeleteConfirmId(null); }}
+                style={{
+                  flex: 1, padding: "10px", borderRadius: "8px", border: "none",
+                  background: "hsl(0, 60%, 35%)", color: "white", fontSize: "13px", cursor: "pointer",
+                }}
+              >
+                Oui
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
