@@ -67,7 +67,7 @@ function AppContent() {
       <div style={{ width: "280px", flexShrink: 0, height: "100%" }}>
         <SetlistEditor />
       </div>
-      <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
+      <div style={{ flex: 1, minWidth: 0, height: "100%", display: "flex", flexDirection: "column" }}>
         <SetlistPreview />
       </div>
       <div style={{ width: "320px", flexShrink: 0, height: "100%" }}>
