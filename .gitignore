@@ -4,4 +4,4 @@ dist
 .env
 .env.local
 generate-icons.mjs
-generate-icons.js
+generate-icons.jsgenerate-icons.mjs
