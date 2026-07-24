@@ -25,10 +25,10 @@ function AppContent() {
 
   if (isMobile) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", overflow: "hidden" }}>
         <div
           style={{
-            display: "flex", borderBottom: "1px solid hsl(220, 15%, 18%)",
+            display: "flex", width: "100%", borderBottom: "1px solid hsl(220, 15%, 18%)",
             background: "hsl(222, 20%, 11%)", flexShrink: 0,
           }}
         >
