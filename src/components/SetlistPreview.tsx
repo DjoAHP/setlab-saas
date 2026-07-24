@@ -96,26 +96,26 @@ export function SetlistPreview() {
           }}
         >
           {/* Band Name */}
-          <h1
+          <h1 className="sl-print-title"
             style={{
-              textAlign: "center", fontSize: `${Math.max(32, dimensions.height * 0.055)}px`,
-              fontWeight: "bold", color: "black", marginBottom: `${Math.max(12, dimensions.height * 0.02)}px`,
-              fontFamily: "serif", flexShrink: 0, letterSpacing: "0.02em",
+              textAlign: "center", fontSize: `${Math.max(24, dimensions.height * 0.04)}px`,
+              fontWeight: "bold", color: "black", marginBottom: `${Math.max(10, dimensions.height * 0.015)}px`,
+              fontFamily: "serif", flexShrink: 0,
             }}
           >
             {setlist?.bandName || "Nom du groupe"}
           </h1>
 
           {/* Séparation */}
-          <div style={{ margin: `0 0 ${Math.max(12, dimensions.height * 0.02)}px 0`, flexShrink: 0 }}>
-            <div style={{ height: "3px", background: "black" }} />
+          <div style={{ margin: `0 0 ${Math.max(10, dimensions.height * 0.015)}px 0`, flexShrink: 0 }}>
+            <div style={{ height: "2px", background: "black" }} />
           </div>
 
           {/* Nombre de morceaux */}
-          <div
+          <div className="sl-print-count"
             style={{
-              textAlign: "center", fontSize: `${Math.max(14, dimensions.height * 0.018)}px`,
-              color: "#888", marginBottom: `${Math.max(12, dimensions.height * 0.02)}px`,
+              textAlign: "center", fontSize: `${Math.max(10, dimensions.height * 0.012)}px`,
+              color: "#888", marginBottom: `${Math.max(10, dimensions.height * 0.015)}px`,
               flexShrink: 0,
             }}
           >
@@ -131,46 +131,46 @@ export function SetlistPreview() {
                   style={{
                     flex: 1, display: "flex", alignItems: "center",
                     borderBottom: song.position < songCount ? "2px solid #ccc" : "none",
-                    minHeight: 0, paddingLeft: `${Math.max(6, dimensions.width * 0.01)}px`,
-                    paddingRight: `${Math.max(6, dimensions.width * 0.01)}px`,
+                    minHeight: 0, paddingLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
+                    paddingRight: `${Math.max(8, dimensions.width * 0.015)}px`,
                   }}
                 >
                   {/* Tonalité (gauche) */}
                   {song.tonalite !== undefined && (
-                    <span
+                    <span className="sl-print-tonalite"
                       style={{
                         flexShrink: 0,
-                        fontSize: `${Math.max(16, dimensions.height * 0.028)}px`,
+                        fontSize: `${Math.max(12, dimensions.height * 0.018)}px`,
                         color: "#666", fontFamily: "monospace", fontStyle: "italic",
-                        marginRight: `${Math.max(8, dimensions.width * 0.015)}px`,
+                        marginRight: `${Math.max(6, dimensions.width * 0.01)}px`,
                       }}
                     >
                       ({song.tonalite})
                     </span>
                   )}
                   {/* Numéro + Titre (centre, prend l'espace restant) */}
-                  <span
+                  <span className="sl-print-song"
                     style={{
                       flex: 1, textAlign: "center",
-                      fontSize: `${Math.max(22, dimensions.height * 0.038)}px`,
+                      fontSize: `${Math.max(14, dimensions.height * 0.025)}px`,
                       color: "black", fontWeight: "600",
-                      fontFamily: "sans-serif", lineHeight: "1.3",
+                      fontFamily: "sans-serif", lineHeight: "1.2",
                       overflow: "visible", whiteSpace: "normal",
                       wordBreak: "break-word",
                     }}
                   >
-                    <span style={{ color: "#888", fontWeight: "400", marginRight: "6px", fontSize: `${Math.max(16, dimensions.height * 0.028)}px` }}>
+                    <span className="sl-print-number" style={{ color: "#888", fontWeight: "400", marginRight: "4px", fontSize: `${Math.max(11, dimensions.height * 0.02)}px` }}>
                       {song.position.toString().padStart(2, '0')}.
                     </span>
                     {song.title}
                   </span>
                   {/* Durée (droite) */}
                   {song.time !== undefined && (
-                    <span
+                    <span className="sl-print-duration"
                       style={{
-                        flexShrink: 0, marginLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
-                        fontSize: `${Math.max(16, dimensions.height * 0.028)}px`,
-                        color: "#888", fontFamily: "monospace", fontWeight: "500",
+                        flexShrink: 0, marginLeft: `${Math.max(6, dimensions.width * 0.01)}px`,
+                        fontSize: `${Math.max(11, dimensions.height * 0.018)}px`,
+                        color: "#888", fontFamily: "monospace",
                       }}
                     >
                       {formatTime(song.time)}
@@ -182,7 +182,7 @@ export function SetlistPreview() {
               <div
                 style={{
                   flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#999", fontSize: `${Math.max(18, dimensions.height * 0.025)}px`,
+                  color: "#999", fontSize: `${Math.max(14, dimensions.height * 0.015)}px`,
                   fontStyle: "italic",
                 }}
               >
@@ -193,16 +193,16 @@ export function SetlistPreview() {
 
           {/* Temps total */}
           {songCount > 0 && (
-            <div
+            <div className="sl-print-total"
               style={{
-                textAlign: "center", fontSize: `${Math.max(16, dimensions.height * 0.022)}px`,
-                color: getTempsCouleur(), padding: `${Math.max(12, dimensions.height * 0.015)}px 0`,
-                borderTop: "2px solid #ccc", flexShrink: 0, fontWeight: "500",
+                textAlign: "center", fontSize: `${Math.max(12, dimensions.height * 0.014)}px`,
+                color: getTempsCouleur(), padding: `${Math.max(8, dimensions.height * 0.01)}px 0`,
+                borderTop: "1px solid #eee", flexShrink: 0,
               }}
             >
               Temps total : {formatTime(tempsTotal)}
               {setlist?.stageTimeLimit != null && (
-                <span style={{ color: "#888", fontSize: `${Math.max(14, dimensions.height * 0.018)}px`, marginLeft: "8px" }}>
+                <span className="sl-print-limit" style={{ color: "#888", fontSize: `${Math.max(10, dimensions.height * 0.011)}px`, marginLeft: "8px" }}>
                   / {formatTime(setlist.stageTimeLimit)}
                 </span>
               )}
@@ -229,6 +229,14 @@ export function SetlistPreview() {
             padding: 15mm 20mm !important;
             overflow: visible !important;
           }
+          .sl-print-title { font-size: 32px !important; }
+          .sl-print-count { font-size: 14px !important; }
+          .sl-print-song { font-size: 22px !important; }
+          .sl-print-number { font-size: 16px !important; }
+          .sl-print-duration { font-size: 16px !important; }
+          .sl-print-tonalite { font-size: 16px !important; }
+          .sl-print-total { font-size: 16px !important; }
+          .sl-print-limit { font-size: 14px !important; }
         }
       `}</style>
     </div>
