@@ -129,10 +129,9 @@ export function SetlistPreview() {
                 <div
                   key={song.id}
                   style={{
-                    flex: 1, display: "flex", alignItems: "center",
+                    flex: 1, display: "flex", alignItems: "center", position: "relative",
                     borderBottom: song.position < songCount ? "2px solid #ccc" : "none",
-                    minHeight: 0, paddingLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
-                    paddingRight: `${Math.max(8, dimensions.width * 0.015)}px`,
+                    minHeight: 0,
                   }}
                 >
                   {/* Tonalité (gauche) */}
@@ -142,21 +141,23 @@ export function SetlistPreview() {
                         flexShrink: 0,
                         fontSize: `${Math.max(12, dimensions.height * 0.018)}px`,
                         color: "#666", fontFamily: "monospace", fontStyle: "italic",
-                        marginRight: `${Math.max(6, dimensions.width * 0.01)}px`,
+                        marginLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
                       }}
                     >
                       ({song.tonalite})
                     </span>
                   )}
-                  {/* Numéro + Titre (centre, prend l'espace restant) */}
+                  {/* Espaceur gauche (pousse la durée à droite) */}
+                  <div style={{ flex: 1 }} />
+                  {/* Numéro + Titre (centré parfaitement dans la largeur totale) */}
                   <span className="sl-print-song"
                     style={{
-                      flex: 1, textAlign: "center",
+                      position: "absolute", left: "50%", transform: "translateX(-50%)",
+                      textAlign: "center", whiteSpace: "nowrap",
+                      maxWidth: "70%", overflow: "hidden", textOverflow: "ellipsis",
                       fontSize: `${Math.max(14, dimensions.height * 0.025)}px`,
                       color: "black", fontWeight: "600",
                       fontFamily: "sans-serif", lineHeight: "1.2",
-                      overflow: "visible", whiteSpace: "normal",
-                      wordBreak: "break-word",
                     }}
                   >
                     <span className="sl-print-number" style={{ color: "#888", fontWeight: "400", marginRight: "4px", fontSize: `${Math.max(11, dimensions.height * 0.02)}px` }}>
@@ -164,13 +165,16 @@ export function SetlistPreview() {
                     </span>
                     {song.title}
                   </span>
+                  {/* Espaceur droit */}
+                  <div style={{ flex: 1 }} />
                   {/* Durée (droite) */}
                   {song.time !== undefined && (
                     <span className="sl-print-duration"
                       style={{
-                        flexShrink: 0, marginLeft: `${Math.max(6, dimensions.width * 0.01)}px`,
+                        flexShrink: 0,
                         fontSize: `${Math.max(11, dimensions.height * 0.018)}px`,
                         color: "#888", fontFamily: "monospace",
+                        marginRight: `${Math.max(8, dimensions.width * 0.015)}px`,
                       }}
                     >
                       {formatTime(song.time)}
