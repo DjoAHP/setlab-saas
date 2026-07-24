@@ -38,6 +38,9 @@ export function SetlistEditor() {
   const dragItemId = useRef<string | null>(null);
   const [draggedSongId, setDraggedSongId] = useState<string | null>(null);
   const [dragOverSongId, setDragOverSongId] = useState<string | null>(null);
+  const touchDragId = useRef<string | null>(null);
+  const touchStartY = useRef(0);
+  const touchOrdreRef = useRef<HTMLDivElement | null>(null);
 
   const songs = [...(setlist?.songs ?? [])].sort((a, b) => a.position - b.position);
   const songCount = songs.length;
@@ -131,6 +134,37 @@ export function SetlistEditor() {
     setDragOverSongId(null);
     dragItemId.current = null;
   }, []);
+
+  // ── Touch handlers pour la modale ordre (mobile) ────────
+  const handleTouchStartOrdre = useCallback((e: React.TouchEvent, songId: string) => {
+    touchDragId.current = songId;
+    touchStartY.current = e.touches[0].clientY;
+    setDraggedSongId(songId);
+  }, []);
+
+  const handleTouchMoveOrdre = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!el) return;
+    const row = (el as HTMLElement).closest("[data-order-id]");
+    if (row) {
+      const overId = row.getAttribute("data-order-id");
+      setDragOverSongId(overId);
+    }
+  }, []);
+
+  const handleTouchEndOrdre = useCallback(() => {
+    const srcId = touchDragId.current;
+    const tgtId = dragOverSongId;
+    if (srcId && tgtId && srcId !== tgtId) {
+      const tgt = songs.find((s) => s.id === tgtId);
+      if (tgt) reorderSong(srcId, tgt.position);
+    }
+    setDraggedSongId(null);
+    setDragOverSongId(null);
+    touchDragId.current = null;
+  }, [dragOverSongId, songs, reorderSong]);
 
   // ESC pour fermer les modales
   useEffect(() => {
@@ -487,7 +521,7 @@ export function SetlistEditor() {
           <div
             style={{
               background: "hsl(222, 22%, 12%)", border: "1px solid hsl(220, 15%, 22%)",
-              borderRadius: "12px", width: "300px", maxHeight: "80vh",
+              borderRadius: "12px", width: "min(90vw, 360px)", maxHeight: "80vh",
               display: "flex", flexDirection: "column",
             }}
             onClick={(e) => e.stopPropagation()}
@@ -496,21 +530,28 @@ export function SetlistEditor() {
               <span style={{ color: "hsl(210, 30%, 90%)", fontSize: "14px", fontWeight: 600 }}>Ordre des morceaux</span>
               <button onClick={() => setOrdreModalOuverte(false)} style={{ background: "none", border: "none", color: "hsl(220, 15%, 45%)", cursor: "pointer", fontSize: "16px" }}>✕</button>
             </div>
-            <div style={{ overflowY: "auto", flex: 1, padding: "8px 0" }}>
+            <div ref={touchOrdreRef} style={{ overflowY: "auto", flex: 1, padding: "8px 0" }}>
               {songs.map((song, index) => (
                 <div
                   key={song.id}
+                  data-order-id={song.id}
                   draggable
                   style={{
                     display: "flex", alignItems: "center", gap: "8px",
-                    padding: "10px 16px", borderBottom: index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
+                    padding: "12px 16px",
+                    borderBottom: index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
                     cursor: "grab",
+                    background: dragOverSongId === song.id ? "rgba(255,255,255,0.05)" : "transparent",
+                    touchAction: "none",
                   }}
                   onDragStart={(e) => handleDragStart(e, song.id)}
                   onDragOver={(e) => handleDragOver(e, song.id)}
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, song.id)}
                   onDragEnd={handleDragEnd}
+                  onTouchStart={(e) => handleTouchStartOrdre(e, song.id)}
+                  onTouchMove={handleTouchMoveOrdre}
+                  onTouchEnd={handleTouchEndOrdre}
                 >
                   <svg width="10" height="16" viewBox="0 0 8 12" fill="currentColor" style={{ color: "hsl(220, 15%, 30%)", flexShrink: 0 }}>
                     <circle cx="2" cy="2" r="1.2" />
