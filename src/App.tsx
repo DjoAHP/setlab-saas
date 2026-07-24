@@ -15,6 +15,16 @@ function AppContent() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Écouter l'événement d'export PDF depuis l'éditeur (mobile)
+  useEffect(() => {
+    const onExport = () => {
+      setMobileTab("preview");
+      setTimeout(() => window.print(), 100);
+    };
+    window.addEventListener("setlab-export-pdf", onExport);
+    return () => window.removeEventListener("setlab-export-pdf", onExport);
+  }, []);
+
   if (loading) {
     return (
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "hsl(220, 15%, 50%)" }}>
@@ -27,15 +37,9 @@ function AppContent() {
     return (
       <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", overflow: "hidden" }}>
         <div style={{ flex: 1, minHeight: 0, width: "100%", display: "flex", flexDirection: "column" }}>
-          <div style={{ flex: 1, minHeight: 0, display: mobileTab === "editor" ? "flex" : "none" }}>
-            <SetlistEditor />
-          </div>
-          <div style={{ flex: 1, minHeight: 0, visibility: mobileTab === "preview" ? "visible" : "hidden", pointerEvents: mobileTab === "preview" ? "auto" : "none" }}>
-            <SetlistPreview />
-          </div>
-          <div style={{ flex: 1, minHeight: 0, display: mobileTab === "chrono" ? "flex" : "none" }}>
-            <ChronoPanel />
-          </div>
+          {mobileTab === "editor" && <SetlistEditor />}
+          {mobileTab === "preview" && <SetlistPreview />}
+          {mobileTab === "chrono" && <ChronoPanel />}
         </div>
 
         <div

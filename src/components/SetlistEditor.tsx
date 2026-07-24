@@ -493,7 +493,13 @@ export function SetlistEditor() {
           Importer
         </button>
         <button
-          onClick={() => window.print()}
+          onClick={() => {
+            if (window.innerWidth < 768) {
+              window.dispatchEvent(new CustomEvent("setlab-export-pdf"));
+            } else {
+              window.print();
+            }
+          }}
           style={{
             background: "hsl(var(--tl-accent-button))", border: "1px solid hsl(var(--tl-accent-button-border))",
             color: "white", padding: "10px 16px", borderRadius: "8px",
