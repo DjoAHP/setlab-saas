@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  background: hsl(222, 25%, 7%);
+  color: hsl(210, 30%, 90%);
+}
+
+#root,
+#root > div {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@layer base {
+  :root {
+    --tl-bg-deep: 222 25% 7%;
+    --tl-bg-main: 222 20% 10%;
+    --tl-bg-panel: 222 18% 13%;
+    --tl-bg-card: 222 15% 16%;
+    --tl-border: 220 15% 22%;
+    --tl-glass: rgba(255, 255, 255, 0.04);
+    --tl-accent-h: 198;
+    --tl-accent-s: 67%;
+    --tl-accent-l: 80%;
+    --tl-accent-dim: var(--tl-accent-h) 40% 22%;
+    --tl-accent-mid: var(--tl-accent-h) 40% 25%;
+    --tl-accent-border: var(--tl-accent-h) 40% 35%;
+    --tl-accent-text: var(--tl-accent-h) 80% 80%;
+    --tl-accent-button: var(--tl-accent-h) 60% 35%;
+    --tl-accent-button-border: var(--tl-accent-h) 60% 45%;
+    --tl-accent-princ: 198 48% 94%;
+    --tl-accent-terc: 198 80% 76%;
+  }
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: hsl(var(--tl-bg-deep)); }
+::-webkit-scrollbar-thumb { background: hsl(var(--tl-border)); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(198, 48%, 60%); }
