@@ -327,24 +327,12 @@ export function SetlistEditor() {
               {songs.map((song) => (
                 <div
                   key={song.id}
-                  draggable="true"
-                  data-song-id={song.id}
                   style={{
                     display: "flex", alignItems: "center", gap: "6px",
                     padding: "6px 8px", borderRadius: "6px",
-                    background: dragOverSongId === song.id ? "rgba(255,255,255,0.05)"
-                      : draggedSongId === song.id ? "rgba(255,255,255,0.02)" : "transparent",
-                    cursor: draggedSongId === song.id ? "grabbing" : "grab",
-                    opacity: draggedSongId === song.id ? 0.5 : 1,
+                    background: "transparent",
                     transition: "background 0.15s",
-                    border: "1px solid transparent",
-                    borderColor: dragOverSongId === song.id ? "hsl(var(--tl-accent-border))" : "transparent",
                   }}
-                  onDragStart={(e) => handleDragStart(e, song.id)}
-                  onDragOver={(e) => handleDragOver(e, song.id)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDrop(e, song.id)}
-                  onDragEnd={handleDragEnd}
                 >
                   {/* Tonalité */}
                   <select
