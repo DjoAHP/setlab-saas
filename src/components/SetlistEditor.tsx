@@ -246,7 +246,7 @@ export function SetlistEditor() {
             style={{
               background: "hsl(222, 18%, 17%)",
               border: "1px solid hsl(220, 15%, 22%)",
-              color: "hsl(var(--tl-accent-text))",
+              color: "white",
               padding: "2px 8px",
               borderRadius: "6px",
               fontSize: "11px",
@@ -526,7 +526,7 @@ export function SetlistEditor() {
           onClick={handleImporter}
           style={{
             background: "hsl(222, 18%, 17%)", border: "1px solid hsl(220, 15%, 22%)",
-            color: "hsl(220, 15%, 60%)", padding: "10px 16px", borderRadius: "8px",
+            color: "white", padding: "10px 16px", borderRadius: "8px",
             fontSize: "13px", cursor: "pointer", width: "100%",
           }}
         >
