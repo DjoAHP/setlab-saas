@@ -593,10 +593,10 @@ export function SetlistEditor() {
                   style={{
                     display: "flex", alignItems: "center", gap: "8px",
                     padding: "12px 16px",
-                    cursor: "grab",
+                    cursor: "default",
                     background: draggedSongId === song.id ? "rgba(255,255,255,0.02)" : "transparent",
                     opacity: draggedSongId === song.id ? 0.4 : 1,
-                    touchAction: "none",
+                    touchAction: "auto",
                     position: "relative",
                     borderTop: isBefore ? "2px solid hsl(var(--tl-accent-button-border))" : "2px solid transparent",
                     borderBottom: isAfter ? "2px solid hsl(var(--tl-accent-button-border))" : index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
@@ -610,13 +610,13 @@ export function SetlistEditor() {
                   onTouchMove={handleTouchMoveOrdre}
                   onTouchEnd={handleTouchEndOrdre}
                 >
-                  <svg width="10" height="16" viewBox="0 0 8 12" fill="currentColor" style={{ color: "hsl(220, 15%, 30%)", flexShrink: 0 }}>
-                    <circle cx="2" cy="2" r="1.2" />
-                    <circle cx="6" cy="2" r="1.2" />
-                    <circle cx="2" cy="6" r="1.2" />
-                    <circle cx="6" cy="6" r="1.2" />
-                    <circle cx="2" cy="10" r="1.2" />
-                    <circle cx="6" cy="10" r="1.2" />
+                  <svg width="18" height="28" viewBox="0 0 12 18" fill="currentColor" style={{ color: "hsl(220, 15%, 35%)", flexShrink: 0, cursor: "grab", touchAction: "none" }}>
+                    <circle cx="3" cy="3" r="1.8" />
+                    <circle cx="9" cy="3" r="1.8" />
+                    <circle cx="3" cy="9" r="1.8" />
+                    <circle cx="9" cy="9" r="1.8" />
+                    <circle cx="3" cy="15" r="1.8" />
+                    <circle cx="9" cy="15" r="1.8" />
                   </svg>
                   <span style={{ color: "hsl(220, 15%, 40%)", fontSize: "13px", fontFamily: "monospace", flexShrink: 0, width: "28px" }}>
                     {song.position.toString().padStart(2, '0')}.
