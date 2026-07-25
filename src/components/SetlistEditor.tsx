@@ -589,7 +589,6 @@ export function SetlistEditor() {
                 <div
                   key={song.id}
                   data-order-id={song.id}
-                  draggable
                   style={{
                     display: "flex", alignItems: "center", gap: "8px",
                     padding: "12px 16px",
@@ -601,23 +600,28 @@ export function SetlistEditor() {
                     borderTop: isBefore ? "2px solid hsl(var(--tl-accent-button-border))" : "2px solid transparent",
                     borderBottom: isAfter ? "2px solid hsl(var(--tl-accent-button-border))" : index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
                   }}
-                  onDragStart={(e) => handleDragStart(e, song.id)}
-                  onDragOver={(e) => handleDragOver(e, song.id)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDrop(e, song.id)}
-                  onDragEnd={handleDragEnd}
-                  onTouchStart={(e) => handleTouchStartOrdre(e, song.id)}
-                  onTouchMove={handleTouchMoveOrdre}
-                  onTouchEnd={handleTouchEndOrdre}
                 >
-                  <svg width="18" height="28" viewBox="0 0 12 18" fill="currentColor" style={{ color: "hsl(220, 15%, 35%)", flexShrink: 0, cursor: "grab", touchAction: "none" }}>
-                    <circle cx="3" cy="3" r="1.8" />
-                    <circle cx="9" cy="3" r="1.8" />
-                    <circle cx="3" cy="9" r="1.8" />
-                    <circle cx="9" cy="9" r="1.8" />
-                    <circle cx="3" cy="15" r="1.8" />
-                    <circle cx="9" cy="15" r="1.8" />
-                  </svg>
+                  <span
+                    draggable
+                    style={{ display: "flex", alignItems: "center", cursor: "grab", touchAction: "none" }}
+                    onDragStart={(e) => handleDragStart(e, song.id)}
+                    onDragOver={(e) => handleDragOver(e, song.id)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, song.id)}
+                    onDragEnd={handleDragEnd}
+                    onTouchStart={(e) => handleTouchStartOrdre(e, song.id)}
+                    onTouchMove={handleTouchMoveOrdre}
+                    onTouchEnd={handleTouchEndOrdre}
+                  >
+                    <svg width="18" height="28" viewBox="0 0 12 18" fill="currentColor" style={{ color: "hsl(220, 15%, 35%)", display: "block", pointerEvents: "none" }}>
+                      <circle cx="3" cy="3" r="1.8" />
+                      <circle cx="9" cy="3" r="1.8" />
+                      <circle cx="3" cy="9" r="1.8" />
+                      <circle cx="9" cy="9" r="1.8" />
+                      <circle cx="3" cy="15" r="1.8" />
+                      <circle cx="9" cy="15" r="1.8" />
+                    </svg>
+                  </span>
                   <span style={{ color: "hsl(220, 15%, 40%)", fontSize: "13px", fontFamily: "monospace", flexShrink: 0, width: "28px" }}>
                     {song.position.toString().padStart(2, '0')}.
                   </span>
