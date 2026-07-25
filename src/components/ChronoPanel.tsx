@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSetlab } from "../context/SetlabContext";
-import chronoService from "../services/chronoService";
+import chronoService, { type ChronoServiceState } from "../services/chronoService";
 
 export function ChronoPanel() {
   const { setlist, updateSong } = useSetlab();
@@ -12,7 +12,7 @@ export function ChronoPanel() {
   const [toastSong, setToastSong] = useState("");
 
   useEffect(() => {
-    const listener = (state: any) => {
+    const listener = (state: ChronoServiceState) => {
       setIsRunning(state.isRunning);
       setElapsedMs(state.elapsedMs);
       setDisplay(state.display);

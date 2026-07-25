@@ -1,6 +1,22 @@
 import { useState, useCallback, useEffect } from "react";
+import { z } from "zod";
 import { db } from "../db/schema";
 import type { Setlist, Song } from "../types";
+
+const SongSchema = z.object({
+  id: z.string().optional(),
+  title: z.string(),
+  position: z.number().optional(),
+  time: z.number().optional(),
+  tonalite: z.string().optional(),
+});
+
+const SetlistImportSchema = z.object({
+  bandName: z.string().optional(),
+  stageTimeLimit: z.number().nullable().optional(),
+  songs: z.array(SongSchema).optional(),
+  setlistSongs: z.array(SongSchema).optional(),
+});
 
 function genererID(): string {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -39,12 +55,19 @@ export function useSetlabStore() {
   }, []);
 
   const sauvegarder = useCallback(async (miseAJour: Partial<Setlist>) => {
+    let updated: Setlist | null = null;
     setSetlist((prev) => {
       if (!prev) return prev;
-      const updated = { ...prev, ...miseAJour, updatedAt: maintenant() };
-      db.setlists.put(updated);
+      updated = { ...prev, ...miseAJour, updatedAt: maintenant() };
       return updated;
     });
+    if (updated) {
+      try {
+        await db.setlists.put(updated);
+      } catch (err) {
+        console.error("Erreur lors de la sauvegarde Dexie :", err);
+      }
+    }
   }, []);
 
   const setBandName = useCallback(
@@ -110,11 +133,24 @@ export function useSetlabStore() {
   const importerSetlist = useCallback(
     (contenuJSON: string): boolean => {
       try {
-        const data = JSON.parse(contenuJSON) as Partial<Setlist>;
-        if (!setlist) return false;
+        const rawData = JSON.parse(contenuJSON);
+        const result = SetlistImportSchema.safeParse(rawData);
+        if (!result.success || !setlist) return false;
+
+        const data = result.data;
+        const rawSongs = data.songs ?? data.setlistSongs ?? [];
+        const songsProcessed: Song[] = rawSongs.map((s, idx) => ({
+          id: s.id || genererID(),
+          title: s.title,
+          position: s.position ?? idx + 1,
+          time: s.time,
+          tonalite: s.tonalite,
+        }));
+
         sauvegarder({
           bandName: data.bandName ?? setlist.bandName,
-          songs: data.songs ?? setlist.songs ?? [],
+          stageTimeLimit: data.stageTimeLimit !== undefined ? data.stageTimeLimit : setlist.stageTimeLimit,
+          songs: songsProcessed,
         });
         return true;
       } catch {
@@ -123,6 +159,24 @@ export function useSetlabStore() {
     },
     [setlist, sauvegarder]
   );
+
+  const exporterSetlist = useCallback(() => {
+    if (!setlist) return;
+    const exportData = {
+      bandName: setlist.bandName,
+      stageTimeLimit: setlist.stageTimeLimit,
+      songs: setlist.songs ?? [],
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${(setlist.bandName || "setlist").replace(/\s+/g, "_")}.tl`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [setlist]);
 
   return {
     setlist,
@@ -134,5 +188,6 @@ export function useSetlabStore() {
     deleteSong,
     reorderSong,
     importerSetlist,
+    exporterSetlist,
   };
 }

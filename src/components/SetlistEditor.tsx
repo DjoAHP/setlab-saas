@@ -23,7 +23,7 @@ const timeSelectStyle: React.CSSProperties = {
 export function SetlistEditor() {
   const {
     setlist, setBandName, setStageTimeLimit,
-    addSong, updateSong, deleteSong, reorderSong, importerSetlist,
+    addSong, updateSong, deleteSong, reorderSong, importerSetlist, exporterSetlist,
   } = useSetlab();
 
   const [newSongTitle, setNewSongTitle] = useState("");
@@ -41,7 +41,6 @@ export function SetlistEditor() {
   const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(null);
   const touchDragId = useRef<string | null>(null);
   const touchStartY = useRef(0);
-  const touchOrdreRef = useRef<HTMLDivElement | null>(null);
 
   const songs = [...(setlist?.songs ?? [])].sort((a, b) => a.position - b.position);
   const songCount = songs.length;
@@ -235,10 +234,37 @@ export function SetlistEditor() {
       }}
     >
       {/* En-tête */}
-      <div style={{ padding: "10px 12px", borderBottom: "1px solid hsl(220, 15%, 16%)", flexShrink: 0 }}>
+      <div style={{ padding: "10px 12px", borderBottom: "1px solid hsl(220, 15%, 16%)", flexShrink: 0, display: "flex", alignItems: "center", gap: "8px" }}>
         <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(220, 15%, 45%)" }}>
           Setlist
         </span>
+        <span style={{ color: "hsl(220, 15%, 28%)", fontSize: "11px" }}>|</span>
+        <button
+          onClick={exporterSetlist}
+          title="Exporter la setlist (.tl)"
+          style={{
+            background: "hsl(222, 18%, 17%)",
+            border: "1px solid hsl(220, 15%, 22%)",
+            color: "hsl(var(--tl-accent-text))",
+            padding: "2px 8px",
+            borderRadius: "6px",
+            fontSize: "11px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            transition: "background 0.15s",
+          }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)"; }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Export .tl
+        </button>
       </div>
 
       {/* Zone défilable */}
@@ -497,11 +523,11 @@ export function SetlistEditor() {
           onClick={handleImporter}
           style={{
             background: "hsl(222, 18%, 17%)", border: "1px solid hsl(220, 15%, 22%)",
-            color: "hsl(220, 15%, 50%)", padding: "10px 16px", borderRadius: "8px",
+            color: "hsl(220, 15%, 60%)", padding: "10px 16px", borderRadius: "8px",
             fontSize: "13px", cursor: "pointer", width: "100%",
           }}
         >
-          Importer
+          Importer .tl
         </button>
         <button
           onClick={() => {
@@ -543,7 +569,7 @@ export function SetlistEditor() {
               <span style={{ color: "hsl(210, 30%, 90%)", fontSize: "14px", fontWeight: 600 }}>Ordre des morceaux</span>
               <button onClick={() => setOrdreModalOuverte(false)} style={{ background: "none", border: "none", color: "hsl(220, 15%, 45%)", cursor: "pointer", fontSize: "16px" }}>✕</button>
             </div>
-            <div ref={touchOrdreRef} style={{ overflowY: "auto", flex: 1, padding: "8px 0", position: "relative" }}>
+            <div style={{ overflowY: "auto", flex: 1, padding: "8px 0", position: "relative" }}>
               {songs.map((song, index) => {
                 const isBefore = dragOverSongId === song.id && dropPosition === "before" && draggedSongId !== song.id;
                 const isAfter = dragOverSongId === song.id && dropPosition === "after" && draggedSongId !== song.id;
