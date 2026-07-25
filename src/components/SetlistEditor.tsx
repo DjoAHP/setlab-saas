@@ -322,13 +322,22 @@ export function SetlistEditor() {
               <button
                 onClick={() => setOrdreModalOuverte(true)}
                 style={{
-                  background: "hsl(222, 18%, 17%)", border: "1px solid hsl(220, 15%, 22%)",
-                  color: "hsl(220, 15%, 50%)", padding: "6px", borderRadius: "6px",
-                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                  width: "40px",
+                  height: "40px",
+                  minWidth: "40px",
+                  padding: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "hsl(222, 18%, 17%)",
+                  border: "1px solid hsl(220, 15%, 22%)",
+                  color: "white",
+                  borderRadius: "8px",
+                  cursor: "pointer",
                 }}
                 title="Réordonner les morceaux"
               >
-                <img src="/assets/ordre.svg" alt="Ordre" width="16" height="16" style={{ filter: "brightness(0) invert(0.6)" }} />
+                <img src="/assets/ordre.svg" alt="Ordre" width="20" height="20" style={{ filter: "brightness(0) invert(1)" }} />
               </button>
             </div>
             {stageEnabled && (
