@@ -319,27 +319,7 @@ export function SetlistEditor() {
                   />
                 </button>
               </div>
-              <button
-                onClick={() => setOrdreModalOuverte(true)}
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  minWidth: "40px",
-                  padding: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "hsl(222, 18%, 17%)",
-                  border: "1px solid hsl(220, 15%, 22%)",
-                  color: "white",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
-                title="Réordonner les morceaux"
-              >
-                <img src="/assets/ordre.svg" alt="Ordre" width="20" height="20" style={{ filter: "brightness(0) invert(1)" }} />
-              </button>
-            </div>
+              </div>
             {stageEnabled && (
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                 <input
@@ -382,6 +362,26 @@ export function SetlistEditor() {
                 placeholder="Titre du morceau..."
                 style={{ ...inputStyle, flex: 1 }}
               />
+              <button
+                onClick={() => setOrdreModalOuverte(true)}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  minWidth: "40px",
+                  padding: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "hsl(222, 18%, 17%)",
+                  border: "1px solid hsl(220, 15%, 22%)",
+                  color: "white",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                }}
+                title="Réordonner les morceaux"
+              >
+                <img src="/assets/ordre.svg" alt="Ordre" width="20" height="20" style={{ filter: "brightness(0) invert(1)" }} />
+              </button>
               <button
                 onClick={handleAddSong}
                 disabled={!newSongTitle.trim()}
