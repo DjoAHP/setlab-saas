@@ -1,0 +1,18 @@
+{
+  "firestore": {
+    "database": "(default)",
+    "location": "europe-west1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "providers": {
+      "anonymous": false,
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "SetLab SaaS",
+        "supportEmail": "djodjo.vely@gmail.com"
+      }
+    }
+  }
+}
