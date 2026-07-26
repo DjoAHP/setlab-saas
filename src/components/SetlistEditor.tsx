@@ -49,6 +49,7 @@ export function SetlistEditor() {
 
   const songs = [...(setlist?.songs ?? [])].sort((a, b) => a.position - b.position);
   const songCount = songs.length;
+  const setlistVide = songCount === 0 && !setlist?.bandName;
 
   // Initialiser le champ temps de scène depuis les données
   useEffect(() => {
@@ -270,6 +271,48 @@ export function SetlistEditor() {
       {/* Zone défilable */}
       <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", minHeight: 0 }}>
         <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "10px", minHeight: 0, minWidth: 0 }}>
+          {/* Barre d'outils */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px" }}>
+            <button
+              onClick={() => { if (!setlistVide) setClearConfirm(true); }}
+              disabled={setlistVide}
+              title={setlistVide ? "Créer une setlist" : "Tout effacer"}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: setlistVide ? "8px 12px" : "6px 10px",
+                borderRadius: "6px",
+                border: setlistVide ? "1px solid hsl(220, 15%, 16%)" : "1px solid hsl(220, 15%, 22%)",
+                background: setlistVide ? "transparent" : "hsl(222, 18%, 17%)",
+                color: setlistVide ? "hsl(220, 15%, 30%)" : "hsl(220, 15%, 40%)",
+                cursor: setlistVide ? "not-allowed" : "pointer",
+                fontSize: "11px",
+                transition: "color 0.15s, background 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                if (!setlistVide) {
+                  (e.currentTarget as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)";
+                  (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!setlistVide) {
+                  (e.currentTarget as HTMLButtonElement).style.color = "hsl(220, 15%, 40%)";
+                  (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)";
+                }
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+              {setlistVide && <span>Créer une setlist</span>}
+            </button>
+          </div>
+
           {/* Input Band Name */}
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
             <label style={{ fontSize: "11px", color: "hsl(220, 15%, 50%)" }}>Groupe</label>
@@ -340,35 +383,6 @@ export function SetlistEditor() {
                   placeholder="SS"
                   style={{ ...inputStyle, width: "70px", textAlign: "center", fontSize: "13px" }}
                 />
-                <div style={{ flex: 1 }} />
-                <button
-                  onClick={() => setClearConfirm(true)}
-                  title="Tout effacer"
-                  style={{
-                    width: "36px",
-                    height: "36px",
-                    minWidth: "36px",
-                    padding: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "hsl(222, 18%, 17%)",
-                    border: "1px solid hsl(220, 15%, 22%)",
-                    color: "hsl(220, 15%, 40%)",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    transition: "color 0.15s, background 0.15s",
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(220, 15%, 40%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)"; }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                    <line x1="10" y1="11" x2="10" y2="17" />
-                    <line x1="14" y1="11" x2="14" y2="17" />
-                  </svg>
-                </button>
               </div>
             )}
           </div>
