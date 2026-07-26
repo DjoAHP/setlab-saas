@@ -18,7 +18,11 @@ export function getStripe(): Stripe {
 
 export function getPriceId(): string {
   if (!_priceId) {
-    _priceId = process.env.STRIPE_PRICE_ID || 'price_1TxSUYFFY7OiGi5kAC3jQRoN';
+    const priceId = process.env.STRIPE_PRICE_ID;
+    if (!priceId) {
+      throw new Error('STRIPE_PRICE_ID environment variable is required');
+    }
+    _priceId = priceId;
   }
   return _priceId;
 }
