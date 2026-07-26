@@ -25,7 +25,7 @@ const timeSelectStyle: React.CSSProperties = {
 export function SetlistEditor() {
   const {
     setlist, setBandName, setStageTimeLimit,
-    addSong, updateSong, deleteSong, reorderSong, importerSetlist, exporterSetlist,
+    addSong, updateSong, deleteSong, reorderSong, importerSetlist, exporterSetlist, clearSetlist,
   } = useSetlab();
 
   const [newSongTitle, setNewSongTitle] = useState("");
@@ -36,6 +36,7 @@ export function SetlistEditor() {
   const [stageEnabled, setStageEnabled] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [ordreModalOuverte, setOrdreModalOuverte] = useState(false);
+  const [clearConfirm, setClearConfirm] = useState(false);
 
   const [showExportModal, setShowExportModal] = useState(false);
   const { plan } = useSubscription();
@@ -196,11 +197,17 @@ export function SetlistEditor() {
 
   // ESC pour fermer les modales
   useEffect(() => {
-    if (!deleteConfirmId && !ordreModalOuverte) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setDeleteConfirmId(null); setOrdreModalOuverte(false); } };
+    if (!deleteConfirmId && !ordreModalOuverte && !clearConfirm) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setDeleteConfirmId(null);
+        setOrdreModalOuverte(false);
+        setClearConfirm(false);
+      }
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [deleteConfirmId, ordreModalOuverte]);
+  }, [deleteConfirmId, ordreModalOuverte, clearConfirm]);
 
   const handleImporter = useCallback(() => {
     const input = document.createElement("input");
@@ -309,6 +316,35 @@ export function SetlistEditor() {
                   />
                 </button>
               </div>
+              <button
+                onClick={() => setClearConfirm(true)}
+                title="Tout effacer"
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  minWidth: "32px",
+                  padding: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "hsl(222, 18%, 17%)",
+                  border: "1px solid hsl(220, 15%, 22%)",
+                  color: "hsl(220, 15%, 40%)",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  transition: "color 0.15s, background 0.15s",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(220, 15%, 40%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)"; }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  <line x1="10" y1="11" x2="10" y2="17" />
+                  <line x1="14" y1="11" x2="14" y2="17" />
+                </svg>
+              </button>
               </div>
             {stageEnabled && (
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
@@ -665,6 +701,54 @@ export function SetlistEditor() {
                 }}
               >
                 Oui
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation tout effacer */}
+      {clearConfirm && (
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 100,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: "rgba(10, 12, 20, 0.82)", backdropFilter: "blur(4px)",
+          }}
+          onClick={() => setClearConfirm(false)}
+        >
+          <div
+            style={{
+              background: "hsl(222, 22%, 12%)", border: "1px solid hsl(220, 15%, 22%)",
+              borderRadius: "12px", padding: "24px", width: "280px",
+              display: "flex", flexDirection: "column", gap: "16px",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ color: "hsl(210, 30%, 90%)", fontSize: "14px", fontWeight: 600, textAlign: "center" }}>
+              Tout effacer ?
+            </div>
+            <div style={{ color: "hsl(220, 15%, 50%)", fontSize: "12px", textAlign: "center", lineHeight: 1.4 }}>
+              Cette action supprime tous les morceaux et réinitialise la setlist.
+            </div>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button
+                onClick={() => setClearConfirm(false)}
+                style={{
+                  flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid hsl(220, 15%, 24%)",
+                  background: "hsl(222, 18%, 18%)", color: "hsl(220, 15%, 60%)", fontSize: "13px", cursor: "pointer",
+                }}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => { clearSetlist(); setClearConfirm(false); }}
+                style={{
+                  flex: 1, padding: "10px", borderRadius: "8px", border: "none",
+                  background: "hsl(0, 60%, 35%)", color: "white", fontSize: "13px", cursor: "pointer",
+                }}
+              >
+                Tout effacer
               </button>
             </div>
           </div>

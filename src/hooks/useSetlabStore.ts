@@ -183,6 +183,15 @@ export function useSetlabStore() {
     });
   }, []);
 
+  const clearSetlist = useCallback(() => {
+    if (!setlist) return;
+    sauvegarder({
+      bandName: '',
+      stageTimeLimit: null,
+      songs: [],
+    });
+  }, [setlist, sauvegarder]);
+
   return {
     setlist,
     loading,
@@ -195,5 +204,6 @@ export function useSetlabStore() {
     importerSetlist,
     exporterSetlist,
     setUserId,
+    clearSetlist,
   };
 }
