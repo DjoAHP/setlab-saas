@@ -91,15 +91,15 @@ export function SetlistPreview() {
             width: `${dimensions.width}px`, height: `${dimensions.height}px`,
             background: "white", borderRadius: "4px",
             boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-            padding: `${Math.max(30, dimensions.height * 0.04)}px ${Math.max(40, dimensions.width * 0.08)}px`,
+            padding: `${Math.max(15, dimensions.height * 0.025)}px ${Math.max(30, dimensions.width * 0.06)}px`,
             display: "flex", flexDirection: "column", overflow: "hidden", flexShrink: 0,
           }}
         >
           {/* Band Name */}
           <h1 className="sl-print-title"
             style={{
-              textAlign: "center", fontSize: `${Math.max(24, dimensions.height * 0.04)}px`,
-              fontWeight: "bold", color: "black", marginBottom: `${Math.max(10, dimensions.height * 0.015)}px`,
+              textAlign: "center", fontSize: `${Math.max(18, dimensions.height * 0.03)}px`,
+              fontWeight: "bold", color: "black", marginBottom: `${Math.max(6, dimensions.height * 0.01)}px`,
               fontFamily: "serif", flexShrink: 0,
             }}
           >
@@ -107,15 +107,15 @@ export function SetlistPreview() {
           </h1>
 
           {/* Séparation */}
-          <div style={{ margin: `0 0 ${Math.max(10, dimensions.height * 0.015)}px 0`, flexShrink: 0 }}>
+          <div style={{ margin: `0 0 ${Math.max(6, dimensions.height * 0.01)}px 0`, flexShrink: 0 }}>
             <div style={{ height: "2px", background: "black" }} />
           </div>
 
           {/* Nombre de morceaux */}
           <div className="sl-print-count"
             style={{
-              textAlign: "center", fontSize: `${Math.max(10, dimensions.height * 0.012)}px`,
-              color: "#888", marginBottom: `${Math.max(10, dimensions.height * 0.015)}px`,
+              textAlign: "center", fontSize: `${Math.max(10, dimensions.height * 0.01)}px`,
+              color: "#888", marginBottom: `${Math.max(6, dimensions.height * 0.01)}px`,
               flexShrink: 0,
             }}
           >
@@ -139,9 +139,9 @@ export function SetlistPreview() {
                     <span className="sl-print-tonalite"
                       style={{
                         flexShrink: 0,
-                        fontSize: `${Math.max(12, dimensions.height * 0.018)}px`,
+                        fontSize: `${Math.max(10, dimensions.height * 0.015)}px`,
                         color: "#666", fontFamily: "monospace", fontStyle: "italic",
-                        marginLeft: `${Math.max(8, dimensions.width * 0.015)}px`,
+                        marginLeft: `${Math.max(6, dimensions.width * 0.012)}px`,
                       }}
                     >
                       ({song.tonalite})
@@ -155,12 +155,12 @@ export function SetlistPreview() {
                       position: "absolute", left: "50%", transform: "translateX(-50%)",
                       textAlign: "center", whiteSpace: "nowrap",
                       maxWidth: "70%", overflow: "hidden", textOverflow: "ellipsis",
-                      fontSize: `${Math.max(14, dimensions.height * 0.025)}px`,
+                      fontSize: `${Math.max(11, dimensions.height * 0.018)}px`,
                       color: "black", fontWeight: "600",
-                      fontFamily: "sans-serif", lineHeight: "1.2",
+                      fontFamily: "sans-serif", lineHeight: "1.1",
                     }}
                   >
-                    <span className="sl-print-number" style={{ color: "#888", fontWeight: "400", marginRight: "4px", fontSize: `${Math.max(11, dimensions.height * 0.02)}px` }}>
+                    <span className="sl-print-number" style={{ color: "#888", fontWeight: "400", marginRight: "4px", fontSize: `${Math.max(9, dimensions.height * 0.015)}px` }}>
                       {song.position.toString().padStart(2, '0')}.
                     </span>
                     {song.title}
@@ -172,9 +172,9 @@ export function SetlistPreview() {
                     <span className="sl-print-duration"
                       style={{
                         flexShrink: 0,
-                        fontSize: `${Math.max(11, dimensions.height * 0.018)}px`,
+                        fontSize: `${Math.max(10, dimensions.height * 0.014)}px`,
                         color: "#888", fontFamily: "monospace",
-                        marginRight: `${Math.max(8, dimensions.width * 0.015)}px`,
+                        marginRight: `${Math.max(6, dimensions.width * 0.012)}px`,
                       }}
                     >
                       {formatTime(song.time)}
@@ -199,8 +199,8 @@ export function SetlistPreview() {
           {songCount > 0 && (
             <div className="sl-print-total"
               style={{
-                textAlign: "center", fontSize: `${Math.max(12, dimensions.height * 0.014)}px`,
-                color: getTempsCouleur(), padding: `${Math.max(8, dimensions.height * 0.01)}px 0`,
+                textAlign: "center", fontSize: `${Math.max(10, dimensions.height * 0.012)}px`,
+                color: getTempsCouleur(), padding: `${Math.max(5, dimensions.height * 0.006)}px 0`,
                 borderTop: "1px solid #eee", flexShrink: 0,
               }}
             >
@@ -233,14 +233,14 @@ export function SetlistPreview() {
             padding: 15mm 20mm !important;
             overflow: visible !important;
           }
-          .sl-print-title { font-size: 32px !important; }
-          .sl-print-count { font-size: 14px !important; }
-          .sl-print-song { font-size: 22px !important; }
-          .sl-print-number { font-size: 16px !important; }
-          .sl-print-duration { font-size: 16px !important; }
-          .sl-print-tonalite { font-size: 16px !important; }
-          .sl-print-total { font-size: 16px !important; }
-          .sl-print-limit { font-size: 14px !important; }
+          .sl-print-title { font-size: 26px !important; }
+          .sl-print-count { font-size: 12px !important; }
+          .sl-print-song { font-size: 18px !important; }
+          .sl-print-number { font-size: 14px !important; }
+          .sl-print-duration { font-size: 14px !important; }
+          .sl-print-tonalite { font-size: 14px !important; }
+          .sl-print-total { font-size: 14px !important; }
+          .sl-print-limit { font-size: 12px !important; }
         }
       `}</style>
     </div>
