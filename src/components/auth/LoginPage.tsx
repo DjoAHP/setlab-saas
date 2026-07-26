@@ -49,7 +49,12 @@ export function LoginPage() {
   return (
     <div style={styles.wrapper}>
       <div style={styles.card}>
-        <div style={styles.logo}>SetLab</div>
+        <div style={styles.logoRow}>
+          <svg width="32" height="32" viewBox="0 0 256 256" fill="none" style={{ flexShrink: 0 }}>
+            <path fill="hsl(198, 80%, 80%)" d="M16.15,16.98c6.71,67.36,8.87,134.88,7.17,202.46-.18,5.19-.48,10.45-.73,15.64-.12-.64-.72-1.2-1.37-1.12,23.55,1.49,51.91,3.42,76.18,3.84,41.86.9,84.65-1.21,126.54-3.51,1.7-.19,7.63-.32,9.35-.5-.22-.06-.53-.03-.77.07-.47.18-.89.8-.93,1.21,0,0-.02-.4-.02-.4,0,0-.26-6.33-.26-6.33-2.13-68.48-3.78-137-1.54-205.49.06,1.57,1.34,2.99,2.89,3.18.14.04.3.02.44.04.06,0,.18-.01.18-.01,0,0-.4-.01-.4-.01,0,0-12.65-.38-12.65-.38-42.01-1.61-84.66-3.64-126.54-7.73,0,0,0-1.95,0-1.95,46.08-4.47,92.97-6.61,139.19-8.11,10.22-.19,16.44,8.18,15.71,18,1.66,50.61,1,101.23-.23,151.85-.42,19.37-.82,38.81-1.72,58.18-.37,6.67-6.41,12.37-13.1,12.19-1.92-.04-7.6-.41-9.63-.49,0,0-25.31-1.32-25.31-1.32-58.93-3.66-118.28-2.82-177.16,1.57-7.03.6-13.56-5.4-13.71-12.44-.21-5.31-.59-10.69-.74-15.99-1.25-33.75-.48-67.49.54-101.23,1.29-33.74,2.88-67.49,6.63-101.23h1.95Z" />
+          </svg>
+          <span style={styles.logo}>SetLab</span>
+        </div>
         <h1 style={styles.title}>Connexion</h1>
 
         <form onSubmit={handleSubmit} style={styles.form}>
@@ -112,6 +117,13 @@ const styles: Record<string, React.CSSProperties> = {
     backgroundColor: 'hsl(222, 25%, 7%)',
     fontFamily: 'system-ui, sans-serif',
   },
+  logoRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    marginBottom: 8,
+  },
   card: {
     width: '100%',
     maxWidth: 400,
@@ -129,7 +141,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 'bold',
     color: 'hsl(198, 80%, 80%)',
     letterSpacing: 2,
-    marginBottom: 8,
   },
   title: {
     fontSize: 18,
