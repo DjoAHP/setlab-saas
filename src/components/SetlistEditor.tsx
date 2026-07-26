@@ -606,9 +606,6 @@ export function SetlistEditor() {
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, index)}
                   onDragEnd={handleDragEnd}
-                  onTouchStart={(e) => handleTouchStartOrdre(e, index)}
-                  onTouchMove={handleTouchMoveOrdre}
-                  onTouchEnd={handleTouchEndOrdre}
                   style={{
                     display: "flex", alignItems: "center", gap: "8px",
                     padding: "12px 16px",
@@ -622,7 +619,10 @@ export function SetlistEditor() {
                   }}
                 >
                   <span
-                    style={{ display: "flex", alignItems: "center", cursor: "grab", touchAction: "none", pointerEvents: "none" }}
+                    onTouchStart={(e) => handleTouchStartOrdre(e, index)}
+                    onTouchMove={handleTouchMoveOrdre}
+                    onTouchEnd={handleTouchEndOrdre}
+                    style={{ display: "flex", alignItems: "center", cursor: "grab", touchAction: "none" }}
                   >
                     <svg width="18" height="28" viewBox="0 0 12 18" fill="currentColor" style={{ color: "hsl(220, 15%, 35%)", display: "block", pointerEvents: "none" }}>
                       <circle cx="3" cy="3" r="1.8" />
