@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSetlab } from "../context/SetlabContext";
 import chronoService, { type ChronoServiceState } from "../services/chronoService";
 import { SyncIndicator } from "./sync/SyncIndicator";
@@ -11,6 +11,18 @@ export function ChronoPanel() {
   const [selectedSongId, setSelectedSongId] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
   const [toastSong, setToastSong] = useState("");
+  const [songDropdownOpen, setSongDropdownOpen] = useState(false);
+  const songDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (songDropdownRef.current && !songDropdownRef.current.contains(e.target as Node)) {
+        setSongDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   useEffect(() => {
     const listener = (state: ChronoServiceState) => {
@@ -35,6 +47,7 @@ export function ChronoPanel() {
   }, [isRunning]);
 
   const songs = [...(setlist?.songs ?? [])].sort((a, b) => a.position - b.position);
+  const selectedSong = songs.find((s) => s.id === selectedSongId);
 
   const handleTransfert = useCallback(() => {
     if (!selectedSongId || elapsedMs === 0) return;
@@ -144,22 +157,87 @@ export function ChronoPanel() {
             Temps mesuré : <span style={{ color: "hsl(var(--tl-accent-text))", fontFamily: "monospace", fontSize: "13px" }}>{formatMs(elapsedMs)}</span>
           </span>
 
-          <select
-            value={selectedSongId}
-            onChange={(e) => setSelectedSongId(e.target.value)}
-            style={{
-              width: "100%", padding: "8px 10px", borderRadius: "8px",
-              background: "hsl(222, 18%, 14%)", border: "1px solid hsl(220, 15%, 22%)",
-              color: "white", fontSize: "12px", cursor: "pointer",
-            }}
-          >
-            <option value="">Sélectionner un morceau...</option>
-            {songs.map((song) => (
-              <option key={song.id} value={song.id}>
-                {song.position.toString().padStart(2, "0")}. {song.title}
-              </option>
-            ))}
-          </select>
+          <div ref={songDropdownRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => setSongDropdownOpen(!songDropdownOpen)}
+              style={{
+                width: "100%", padding: "8px 10px", borderRadius: "8px",
+                background: "hsl(222, 18%, 14%)", border: "1px solid hsl(220, 15%, 22%)",
+                color: selectedSong ? "white" : "hsl(220, 15%, 45%)",
+                fontSize: "12px", cursor: "pointer", textAlign: "left",
+                display: "flex", alignItems: "center", gap: 6,
+              }}
+            >
+              {selectedSong && selectedSong.time ? (
+                <span style={{
+                  width: 8, height: 8, borderRadius: '50%',
+                  background: 'hsl(var(--tl-accent-text))',
+                  boxShadow: '0 0 6px hsl(var(--tl-accent-text))',
+                  flexShrink: 0,
+                }} />
+              ) : (
+                <span style={{ width: 8, flexShrink: 0 }} />
+              )}
+              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {selectedSong
+                  ? `${selectedSong.position.toString().padStart(2, "0")}. ${selectedSong.title}`
+                  : "Sélectionner un morceau..."}
+              </span>
+              <span style={{ fontSize: 10, color: 'hsl(220, 15%, 45%)' }}>{songDropdownOpen ? '▲' : '▼'}</span>
+            </button>
+
+            {songDropdownOpen && (
+              <div
+                style={{
+                  position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 4, zIndex: 40,
+                  background: 'hsl(222, 18%, 14%)', border: '1px solid hsl(220, 15%, 22%)',
+                  borderRadius: 8, maxHeight: 200, overflowY: 'auto', padding: 4,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                }}
+              >
+                <button
+                  onClick={() => { setSelectedSongId(""); setSongDropdownOpen(false); }}
+                  style={{
+                    width: '100%', padding: '8px 10px', border: 'none', borderRadius: 6,
+                    background: 'transparent', color: 'hsl(220, 15%, 45%)',
+                    fontSize: 12, cursor: 'pointer', textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'hsl(220, 15%, 18%)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  Sélectionner un morceau...
+                </button>
+                {songs.map((song) => (
+                  <button
+                    key={song.id}
+                    onClick={() => { setSelectedSongId(song.id); setSongDropdownOpen(false); }}
+                    style={{
+                      width: '100%', padding: '8px 10px', border: 'none', borderRadius: 6,
+                      background: selectedSongId === song.id ? 'hsl(198, 60%, 25%)' : 'transparent',
+                      color: 'white', fontSize: 12, cursor: 'pointer', textAlign: 'left',
+                      display: 'flex', alignItems: 'center', gap: 6,
+                    }}
+                    onMouseEnter={(e) => { if (selectedSongId !== song.id) e.currentTarget.style.background = 'hsl(220, 15%, 18%)'; }}
+                    onMouseLeave={(e) => { if (selectedSongId !== song.id) e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    {song.time ? (
+                      <span style={{
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: 'hsl(var(--tl-accent-text))',
+                        boxShadow: '0 0 6px hsl(var(--tl-accent-text))',
+                        flexShrink: 0,
+                      }} />
+                    ) : (
+                      <span style={{ width: 8, flexShrink: 0 }} />
+                    )}
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {song.position.toString().padStart(2, "0")}. {song.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <button
             onClick={handleTransfert}
