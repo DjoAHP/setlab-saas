@@ -86,10 +86,26 @@ function AppContent() {
   if (isMobile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }}>
-        <div style={{ flex: 1, minHeight: 0, width: '100%', display: 'flex', flexDirection: 'column' }}>
-          {mobileTab === 'editor' && <SetlistEditor />}
-          {mobileTab === 'preview' && <SetlistPreview />}
-          {mobileTab === 'chrono' && <ChronoPanel />}
+        <div style={{ flex: 1, minHeight: 0, width: '100%', position: 'relative', overflow: 'hidden' }}>
+          {/* Panneau actif */}
+          {mobileTab === 'editor' && (
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <SetlistEditor />
+            </div>
+          )}
+          {mobileTab === 'chrono' && (
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <ChronoPanel />
+            </div>
+          )}
+
+          {/* SetlistPreview toujours monté pour permettre les exports depuis n'importe quel onglet */}
+          <div style={mobileTab === 'preview'
+            ? { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }
+            : { position: 'absolute', left: '-9999px', top: 0, width: '800px', height: '1131px' }
+          }>
+            <SetlistPreview />
+          </div>
         </div>
         <div
           style={{
