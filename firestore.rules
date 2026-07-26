@@ -11,7 +11,9 @@ service cloud.firestore {
     }
 
     // Subscription — lecture seule pour l'utilisateur, écriture webhook only
-    match /users/{userId}/subscription {
+    // Attention : le chemin réel est users/{userId}/subscription/main (4 segments)
+    // Il faut match /users/{userId}/subscription/{docId} pour atteindre le document
+    match /users/{userId}/subscription/{docId} {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if false;
     }
