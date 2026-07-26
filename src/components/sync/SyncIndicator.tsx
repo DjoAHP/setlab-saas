@@ -90,10 +90,7 @@ export function SyncIndicator() {
           >
             {user?.email?.charAt(0).toUpperCase() || '?'}
           </div>
-          <span style={{ flex: 1, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {user?.email || 'Utilisateur'}
-          </span>
-          <span style={{ fontSize: 10 }}>{menuOpen ? '▲' : '▼'}</span>
+          <span style={{ fontSize: 10, marginLeft: 'auto' }}>{menuOpen ? '▲' : '▼'}</span>
         </button>
 
         {menuOpen && (
