@@ -4,7 +4,9 @@ import {
   getDoc,
   onSnapshot,
 } from 'firebase/firestore';
-import { getFirebaseFirestore, getFirebaseAuth } from '../firebase/config';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getApp } from 'firebase/app';
+import { getFirebaseFirestore } from '../firebase/config';
 import { useAuth } from '../context/AuthContext';
 
 interface SubscriptionState {
@@ -72,23 +74,12 @@ export function useSubscription() {
     if (!user) return;
 
     try {
-      const functionsUrl = 'https://europe-west1-setlab-saas.cloudfunctions.net/createCheckoutSession';
-      const token = await getFirebaseAuth().currentUser?.getIdToken();
-
-      const response = await fetch(functionsUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({}),
-      });
-
-      const data = await response.json();
-      if (data.result?.url) {
-        window.location.href = data.result.url;
-      } else {
-        console.error('Erreur création session:', data);
+      const functions = getFunctions(getApp(), 'europe-west1');
+      const createCheckout = httpsCallable(functions, 'createCheckoutSession');
+      const result = await createCheckout();
+      const data = result.data as { url: string };
+      if (data.url) {
+        window.location.href = data.url;
       }
     } catch (err) {
       console.error('Erreur subscribe:', err);
@@ -99,23 +90,12 @@ export function useSubscription() {
     if (!user) return;
 
     try {
-      const functionsUrl = 'https://europe-west1-setlab-saas.cloudfunctions.net/createPortalSession';
-      const token = await getFirebaseAuth().currentUser?.getIdToken();
-
-      const response = await fetch(functionsUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({}),
-      });
-
-      const data = await response.json();
-      if (data.result?.url) {
-        window.location.href = data.result.url;
-      } else {
-        console.error('Erreur création portal:', data);
+      const functions = getFunctions(getApp(), 'europe-west1');
+      const createPortal = httpsCallable(functions, 'createPortalSession');
+      const result = await createPortal();
+      const data = result.data as { url: string };
+      if (data.url) {
+        window.location.href = data.url;
       }
     } catch (err) {
       console.error('Erreur manageBilling:', err);

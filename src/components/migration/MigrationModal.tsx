@@ -15,8 +15,7 @@ export function MigrationModal({ userId, onComplete }: MigrationModalProps) {
 
   useEffect(() => {
     db.setlists
-      .where('userId')
-      .equals(null)
+      .filter((sl) => sl.userId === null)
       .toArray()
       .then((list) => {
         setOrphanedSetlists(list);
@@ -48,7 +47,8 @@ export function MigrationModal({ userId, onComplete }: MigrationModalProps) {
   const handleIgnore = async () => {
     setProcessing(true);
     try {
-      await db.setlists.where('userId').equals(null).delete();
+      const aEffacer = await db.setlists.filter((sl) => sl.userId === null).toArray();
+      await db.setlists.bulkDelete(aEffacer.map((sl) => sl.id));
       onComplete();
     } finally {
       setProcessing(false);
