@@ -35,9 +35,8 @@ export function SetlistEditor() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [ordreModalOuverte, setOrdreModalOuverte] = useState(false);
 
-  const dragItemId = useRef<string | null>(null);
-  const [draggedSongId, setDraggedSongId] = useState<string | null>(null);
-  const [dragOverSongId, setDragOverSongId] = useState<string | null>(null);
+  const [dragFromIndex, setDragFromIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(null);
   const touchDragId = useRef<string | null>(null);
   const touchStartY = useRef(0);
@@ -96,87 +95,99 @@ export function SetlistEditor() {
     setEditingSongId(null);
   }, []);
 
-  const handleDragStart = useCallback((e: React.DragEvent, songId: string) => {
-    dragItemId.current = songId;
-    setDraggedSongId(songId);
+  const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
+    setDragFromIndex(index);
     e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", songId);
+    e.dataTransfer.setData("text/plain", String(index));
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent, songId: string) => {
+  const handleDragOver = useCallback((e: React.DragEvent, index: number) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-    setDragOverSongId(songId);
+    if (index === dragFromIndex) return;
+    setDragOverIndex(index);
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
     setDropPosition(e.clientY < rect.top + rect.height / 2 ? "before" : "after");
-  }, []);
+  }, [dragFromIndex]);
 
   const handleDragLeave = useCallback(() => {
-    setDragOverSongId(null);
+    setDragOverIndex(null);
     setDropPosition(null);
   }, []);
 
   const handleDrop = useCallback(
-    (e: React.DragEvent, targetSongId: string) => {
+    (e: React.DragEvent, targetIndex: number) => {
       e.preventDefault();
-      const sourceSongId = dragItemId.current;
-      if (!sourceSongId || sourceSongId === targetSongId) return;
-      const targetSong = songs.find((s) => s.id === targetSongId);
-      if (targetSong) {
-        const pos = dropPosition === "before" ? targetSong.position : Math.min(targetSong.position + 1, songs.length);
-        reorderSong(sourceSongId, pos);
+      const sourceIndex = dragFromIndex;
+      if (sourceIndex === null || sourceIndex === targetIndex) {
+        setDragFromIndex(null);
+        setDragOverIndex(null);
+        setDropPosition(null);
+        return;
       }
-      setDraggedSongId(null);
-      setDragOverSongId(null);
+      const ordered = [...songs];
+      const [moved] = ordered.splice(sourceIndex, 1);
+      let insertAt = targetIndex;
+      if (dropPosition === "after") insertAt = targetIndex + 1;
+      if (sourceIndex < targetIndex) insertAt = Math.max(insertAt - 1, 0);
+      ordered.splice(insertAt, 0, moved);
+      const reindexed = ordered.map((s, i) => ({ ...s, position: i + 1 }));
+      reorderSong(reindexed);
+      setDragFromIndex(null);
+      setDragOverIndex(null);
       setDropPosition(null);
-      dragItemId.current = null;
     },
-    [songs, reorderSong, dropPosition]
+    [songs, reorderSong, dragFromIndex, dropPosition]
   );
 
   const handleDragEnd = useCallback(() => {
-    setDraggedSongId(null);
-    setDragOverSongId(null);
-    dragItemId.current = null;
+    setDragFromIndex(null);
+    setDragOverIndex(null);
+    setDropPosition(null);
   }, []);
 
-  // ── Touch handlers pour la modale ordre (mobile) ────────
-  const handleTouchStartOrdre = useCallback((e: React.TouchEvent, songId: string) => {
-    touchDragId.current = songId;
+  const handleTouchStartOrdre = useCallback((e: React.TouchEvent, index: number) => {
+    const song = songs[index];
+    if (!song) return;
+    touchDragId.current = song.id;
     touchStartY.current = e.touches[0].clientY;
-    setDraggedSongId(songId);
-  }, []);
+    setDragFromIndex(index);
+  }, [songs]);
 
   const handleTouchMoveOrdre = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
     if (!el) return;
-    const row = (el as HTMLElement).closest("[data-order-id]") as HTMLElement | null;
+    const row = (el as HTMLElement).closest("[data-order-index]") as HTMLElement | null;
     if (row) {
-      const overId = row.getAttribute("data-order-id");
-      setDragOverSongId(overId);
-      const rect = row.getBoundingClientRect();
-      const midY = rect.top + rect.height / 2;
-      setDropPosition(touch.clientY < midY ? "before" : "after");
-    } else {
-      setDropPosition(null);
+      const overIndex = Number(row.getAttribute("data-order-index"));
+      if (!isNaN(overIndex) && overIndex !== dragFromIndex) {
+        setDragOverIndex(overIndex);
+        const rect = row.getBoundingClientRect();
+        setDropPosition(touch.clientY < rect.top + rect.height / 2 ? "before" : "after");
+      }
     }
-  }, []);
+  }, [dragFromIndex]);
 
   const handleTouchEndOrdre = useCallback(() => {
-    const srcId = touchDragId.current;
-    const tgtId = dragOverSongId;
-    if (srcId && tgtId && srcId !== tgtId) {
-      const tgt = songs.find((s) => s.id === tgtId);
-      const pos = dropPosition === "before" ? (tgt?.position ?? 1) : Math.min((tgt?.position ?? 1) + 1, songs.length);
-      if (tgt) reorderSong(srcId, pos);
+    const srcIndex = dragFromIndex;
+    const tgtIndex = dragOverIndex;
+    if (srcIndex !== null && tgtIndex !== null && srcIndex !== tgtIndex) {
+      const ordered = [...songs];
+      const [moved] = ordered.splice(srcIndex, 1);
+      let insertAt = tgtIndex;
+      if (dropPosition === "after") insertAt = tgtIndex + 1;
+      if (srcIndex < tgtIndex) insertAt = Math.max(insertAt - 1, 0);
+      ordered.splice(insertAt, 0, moved);
+      const reindexed = ordered.map((s, i) => ({ ...s, position: i + 1 }));
+      reorderSong(reindexed);
     }
-    setDraggedSongId(null);
-    setDragOverSongId(null);
+    setDragFromIndex(null);
+    setDragOverIndex(null);
     setDropPosition(null);
     touchDragId.current = null;
-  }, [dragOverSongId, dropPosition, songs, reorderSong]);
+  }, [dragFromIndex, dragOverIndex, dropPosition, songs, reorderSong]);
 
   // ESC pour fermer les modales
   useEffect(() => {
@@ -583,35 +594,35 @@ export function SetlistEditor() {
             </div>
             <div style={{ overflowY: "auto", flex: 1, padding: "8px 0", position: "relative" }}>
               {songs.map((song, index) => {
-                const isBefore = dragOverSongId === song.id && dropPosition === "before" && draggedSongId !== song.id;
-                const isAfter = dragOverSongId === song.id && dropPosition === "after" && draggedSongId !== song.id;
+                const isBefore = dragOverIndex === index && dropPosition === "before" && dragFromIndex !== index;
+                const isAfter = dragOverIndex === index && dropPosition === "after" && dragFromIndex !== index;
                 return (
                 <div
                   key={song.id}
-                  data-order-id={song.id}
+                  data-order-index={index}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, index)}
+                  onDragEnd={handleDragEnd}
+                  onTouchStart={(e) => handleTouchStartOrdre(e, index)}
+                  onTouchMove={handleTouchMoveOrdre}
+                  onTouchEnd={handleTouchEndOrdre}
                   style={{
                     display: "flex", alignItems: "center", gap: "8px",
                     padding: "12px 16px",
-                    cursor: "default",
-                    background: draggedSongId === song.id ? "rgba(255,255,255,0.02)" : "transparent",
-                    opacity: draggedSongId === song.id ? 0.4 : 1,
-                    touchAction: "auto",
+                    cursor: "grab",
+                    background: dragFromIndex === index ? "rgba(255,255,255,0.02)" : "transparent",
+                    opacity: dragFromIndex === index ? 0.4 : 1,
+                    touchAction: "auto", userSelect: "none",
                     position: "relative",
                     borderTop: isBefore ? "2px solid hsl(var(--tl-accent-button-border))" : "2px solid transparent",
                     borderBottom: isAfter ? "2px solid hsl(var(--tl-accent-button-border))" : index < songs.length - 1 ? "1px solid hsl(220, 15%, 16%)" : "none",
                   }}
                 >
                   <span
-                    draggable
-                    style={{ display: "flex", alignItems: "center", cursor: "grab", touchAction: "none" }}
-                    onDragStart={(e) => handleDragStart(e, song.id)}
-                    onDragOver={(e) => handleDragOver(e, song.id)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(e) => handleDrop(e, song.id)}
-                    onDragEnd={handleDragEnd}
-                    onTouchStart={(e) => handleTouchStartOrdre(e, song.id)}
-                    onTouchMove={handleTouchMoveOrdre}
-                    onTouchEnd={handleTouchEndOrdre}
+                    style={{ display: "flex", alignItems: "center", cursor: "grab", touchAction: "none", pointerEvents: "none" }}
                   >
                     <svg width="18" height="28" viewBox="0 0 12 18" fill="currentColor" style={{ color: "hsl(220, 15%, 35%)", display: "block", pointerEvents: "none" }}>
                       <circle cx="3" cy="3" r="1.8" />

@@ -118,16 +118,9 @@ export function useSetlabStore() {
   );
 
   const reorderSong = useCallback(
-    (songId: string, newPosition: number) => {
-      if (!setlist?.songs) return;
-      const songs = [...setlist.songs];
-      const songIndex = songs.findIndex((s) => s.id === songId);
-      if (songIndex === -1) return;
-      const [song] = songs.splice(songIndex, 1);
-      songs.splice(Math.min(newPosition - 1, songs.length), 0, song);
-      sauvegarder({
-        songs: songs.map((s, i) => ({ ...s, position: i + 1 })),
-      });
+    (reindexedSongs: Song[]) => {
+      if (!setlist) return;
+      sauvegarder({ songs: reindexedSongs });
     },
     [setlist, sauvegarder]
   );
