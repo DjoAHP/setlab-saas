@@ -23,12 +23,13 @@ export function MigrationModal({ userId, onComplete }: MigrationModalProps) {
       });
   }, []);
 
-  if (loading) return null;
+  useEffect(() => {
+    if (!loading && orphanedSetlists.length === 0) {
+      onComplete();
+    }
+  }, [loading, orphanedSetlists, onComplete]);
 
-  if (orphanedSetlists.length === 0) {
-    onComplete();
-    return null;
-  }
+  if (loading) return null;
 
   const handleAssociate = async () => {
     setProcessing(true);

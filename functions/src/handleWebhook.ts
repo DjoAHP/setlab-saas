@@ -4,7 +4,7 @@ import { getStripe } from './stripe';
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
-export const handleStripeWebhook = functions.onRequest(async (req, res) => {
+export const handleStripeWebhook = functions.onRequest({ cors: true, region: 'europe-west1' }, async (req, res) => {
   if (!WEBHOOK_SECRET) {
     console.error('STRIPE_WEBHOOK_SECRET is not configured');
     res.status(500).send('Webhook secret not configured');

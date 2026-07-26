@@ -7,7 +7,7 @@ admin.initializeApp();
 
 const SITE_URL = process.env.SITE_URL || 'http://localhost:5173';
 
-export const createCheckoutSession = functions.onCall(async (request) => {
+export const createCheckoutSession = functions.onCall({ cors: true, region: 'europe-west1' }, async (request) => {
   if (!request.auth) {
     throw new HttpsError(
       'unauthenticated',
