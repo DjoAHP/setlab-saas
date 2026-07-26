@@ -3,6 +3,8 @@ import { useSetlab } from "../context/SetlabContext";
 import type { Song } from "../types";
 import { ExportModal } from "./ExportModal";
 import { useSubscription } from "../hooks/useSubscription";
+import CorbeilleIcon from "../assets/corbeille.svg?react";
+import OrdreIcon from "../assets/ordre.svg?react";
 
 const TONALITES = [
   "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
@@ -288,7 +290,7 @@ export function SetlistEditor() {
                 borderRadius: "6px",
                 border: setlistVide ? "1px solid hsl(220, 15%, 16%)" : "1px solid hsl(220, 15%, 22%)",
                 background: setlistVide ? "transparent" : "hsl(222, 18%, 17%)",
-                color: setlistVide ? "hsl(220, 15%, 30%)" : "hsl(220, 15%, 40%)",
+                color: setlistVide ? "hsl(220, 15%, 30%)" : "hsl(var(--tl-accent-custom-icons))",
                 cursor: setlistVide ? "not-allowed" : "pointer",
                 transition: "color 0.15s, background 0.15s",
               }}
@@ -300,17 +302,12 @@ export function SetlistEditor() {
               }}
               onMouseLeave={(e) => {
                 if (!setlistVide) {
-                  (e.currentTarget as HTMLButtonElement).style.color = "hsl(220, 15%, 40%)";
+                  (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--tl-accent-custom-icons))";
                   (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)";
                 }
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                <line x1="10" y1="11" x2="10" y2="17" />
-                <line x1="14" y1="11" x2="14" y2="17" />
-              </svg>
+              <CorbeilleIcon width="18" height="18" style={{ flexShrink: 0 }} />
             </button>
           </div>
 
@@ -415,13 +412,13 @@ export function SetlistEditor() {
                   justifyContent: "center",
                   background: "hsl(222, 18%, 17%)",
                   border: "1px solid hsl(220, 15%, 22%)",
-                  color: "white",
+                  color: "hsl(var(--tl-accent-custom-icons))",
                   borderRadius: "8px",
                   cursor: "pointer",
                 }}
                 title="Réordonner les morceaux"
               >
-                <img src="/assets/ordre.svg" alt="Ordre" width="20" height="20" style={{ filter: "brightness(0) invert(1)" }} />
+                <OrdreIcon width="20" height="20" />
               </button>
               <button
                 onClick={handleAddSong}
