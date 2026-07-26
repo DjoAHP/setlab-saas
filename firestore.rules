@@ -10,12 +10,13 @@ service cloud.firestore {
         && request.resource.data.userId == request.auth.uid;
     }
 
-    // Subscription — lecture seule pour l'utilisateur, écriture webhook only
-    // Attention : le chemin réel est users/{userId}/subscription/main (4 segments)
-    // Il faut match /users/{userId}/subscription/{docId} pour atteindre le document
+    // Subscription — création autorisée pour plan='free' uniquement, jamais de modification
+    // Le webhook Stripe (Admin SDK) peut modifier via bypass des règles
     match /users/{userId}/subscription/{docId} {
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false;
+      allow create: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.plan == 'free';
+      allow update, delete: if false;
     }
 
     // Export count — l'utilisateur peut lire/créer/incrémenter (max 3)
