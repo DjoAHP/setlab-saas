@@ -10,12 +10,16 @@ service cloud.firestore {
         && request.resource.data.userId == request.auth.uid;
     }
 
-    // Subscription — création autorisée pour plan='free' uniquement, jamais de modification
+    // Subscription — création autorisée pour plan='free' uniquement,
+    // tous les champs Stripe doivent être null (empêche l'injection d'un customerId arbitraire)
     // Le webhook Stripe (Admin SDK) peut modifier via bypass des règles
     match /users/{userId}/subscription/{docId} {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow create: if request.auth != null && request.auth.uid == userId
-        && request.resource.data.plan == 'free';
+        && request.resource.data.plan == 'free'
+        && request.resource.data.stripeCustomerId == null
+        && request.resource.data.stripeSubscriptionId == null
+        && request.resource.data.status == null;
       allow update, delete: if false;
     }
 
