@@ -12,7 +12,7 @@ function moisCourant(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
-const QUOTA_MAX = 2;
+const QUOTA_MAX = 3;
 
 interface ExportQuotaState {
   remaining: number;

@@ -18,16 +18,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Export count — l'utilisateur peut lire/créer/incrémenter (max 2)
-    // La création impose count=1 (pas <= 2) pour éviter de brûler le quota en 1 appel
-    // L'update vérifie que count ne fait qu'incrémenter de 1 et que < 2
+    // Export count — l'utilisateur peut lire/créer/incrémenter (max 3)
+    // La création impose count=1 (pas <= 3) pour éviter de brûler le quota en 1 appel
+    // L'update vérifie que count ne fait qu'incrémenter de 1 et que < 3
     match /users/{userId}/exports/{monthDoc} {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow create: if request.auth != null && request.auth.uid == userId
         && request.resource.data.count == 1
         && request.resource.data.month == monthDoc;
       allow update: if request.auth != null && request.auth.uid == userId
-        && resource.data.count < 2
+        && resource.data.count < 3
         && request.resource.data.count == resource.data.count + 1;
     }
 
