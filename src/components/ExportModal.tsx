@@ -15,6 +15,7 @@ export function ExportModal({ onClose }: ExportModalProps) {
   const { remaining, total, loading: quotaLoading, canExport, incrementExport, refresh } = useExportQuota();
   const [exporting, setExporting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     refresh();
@@ -28,19 +29,29 @@ export function ExportModal({ onClose }: ExportModalProps) {
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   const handleExport = async (format: string, action: () => Promise<void> | void) => {
     setError(null);
-
-    if (format === 'jpeg' || format === 'png') {
-      const allowed = await canExport();
-      if (!allowed) {
-        setError('Quota mensuel atteint. Passez au plan Illimité pour exporter sans limite.');
-        return;
-      }
-    }
-
     setExporting(format);
+
+    const label: Record<string, string> = { tl: '.tl', pdf: 'PDF', jpeg: 'JPEG', png: 'PNG' };
+    setToast(`Téléchargement ${label[format] || format} en cours...`);
+
     try {
+      if (format === 'jpeg' || format === 'png') {
+        const allowed = await canExport();
+        if (!allowed) {
+          setError('Quota mensuel atteint. Passez au plan Illimité pour exporter sans limite.');
+          setToast(null);
+          return;
+        }
+      }
+
       if (format === 'tl') {
         if (setlist) exporterTl(setlist);
       } else if (format === 'pdf') {
@@ -51,6 +62,7 @@ export function ExportModal({ onClose }: ExportModalProps) {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de l\'export');
+      setToast(null);
     } finally {
       setExporting(null);
     }
@@ -199,6 +211,21 @@ export function ExportModal({ onClose }: ExportModalProps) {
                 Voir les offres →
               </Link>
             )}
+          </div>
+        )}
+
+        {/* Toast de téléchargement */}
+        {toast && (
+          <div
+            style={{
+              position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)',
+              background: 'hsl(var(--tl-accent-button))', color: 'white',
+              padding: '10px 18px', borderRadius: '8px', fontSize: '13px',
+              zIndex: 200, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              pointerEvents: 'none',
+            }}
+          >
+            ✓ {toast}
           </div>
         )}
       </div>
