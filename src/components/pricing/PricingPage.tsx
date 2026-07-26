@@ -34,108 +34,106 @@ export function PricingPage() {
 
   return (
     <div style={styles.wrapper}>
-      {/* Navigation */}
-      <div style={styles.nav}>
-        <Link to="/app" style={styles.backLink}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
+      <div style={styles.page}>
+        {/* Navigation */}
+        <div style={styles.nav}>
+          <Link to="/app" style={styles.backLink}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Retour
+          </Link>
+          <div style={styles.logo}>SetLab</div>
+        </div>
+
+        {/* Hero */}
+        <div style={styles.hero}>
+          <h1 style={styles.title}>
+            Trouvez la formule <span style={{ color: 'hsl(198, 80%, 80%)' }}>adaptée</span>
+          </h1>
+          <p style={styles.subtitle}>
+            Créez, éditez et exportez vos setlists en toute liberté
+          </p>
+        </div>
+
+        {/* Cartes */}
+        <div style={styles.cardsRow}>
+          <div style={styles.card}>
+            <div style={styles.cardHeader}>
+              <div style={styles.cardPlanIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(198, 80%, 80%)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <h2 style={styles.cardTitle}>Gratuit</h2>
+              <div style={styles.priceRow}>
+                <span style={styles.price}>0</span>
+                <span style={styles.priceUnit}>€/mois</span>
+              </div>
+            </div>
+
+            <div style={styles.featureList}>
+              <Feature icon="check" text="Setlists et édition illimitées" />
+              <Feature icon="check" text="3 exports par mois (PDF, JPEG, PNG)" />
+              <Feature icon="cross" text="Export .tl" />
+              <Feature icon="cross" text="Support prioritaire" />
+            </div>
+
+            <div style={styles.cardFooter}>
+              <span style={styles.currentPlan}>
+                {user && plan === 'free' ? '✔ Plan actuel' : ''}
+              </span>
+            </div>
+          </div>
+
+          <div style={styles.cardHighlight}>
+            <div style={styles.badge}>Recommandé</div>
+            <div style={styles.cardHeader}>
+              <div style={styles.cardPlanIconHighlight}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </div>
+              <h2 style={styles.cardTitleHighlight}>Illimité</h2>
+              <div style={styles.priceRow}>
+                <span style={styles.priceHighlight}>3,99</span>
+                <span style={styles.priceUnitHighlight}>€/mois</span>
+              </div>
+            </div>
+
+            <div style={styles.featureList}>
+              <Feature icon="check" text="Setlists et édition illimitées" />
+              <Feature icon="check" text="Exports illimités (PDF, JPEG, PNG)" />
+              <Feature icon="check" text="Export .tl inclus" />
+              <Feature icon="check" text="Annulation à tout moment" />
+            </div>
+
+            <div style={styles.cardFooter}>
+              <button
+                onClick={handleAction}
+                disabled={actionLoading || loading}
+                style={{
+                  ...styles.ctaButton,
+                  opacity: (actionLoading || loading) ? 0.6 : 1,
+                  cursor: (actionLoading || loading) ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {actionLoading ? 'Chargement...' : getButtonLabel()}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={styles.footer}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="hsl(198, 60%, 45%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+            <line x1="1" y1="10" x2="23" y2="10" />
           </svg>
-          Retour
-        </Link>
-        <div style={styles.logo}>SetLab</div>
-      </div>
-
-      {/* Hero */}
-      <div style={styles.hero}>
-        <h1 style={styles.title}>
-          Trouvez la formule <span style={{ color: 'hsl(198, 80%, 80%)' }}>adaptée</span>
-        </h1>
-        <p style={styles.subtitle}>
-          Créez, éditez et exportez vos setlists en toute liberté
-        </p>
-      </div>
-
-      {/* Cartes */}
-      <div style={styles.cardsRow}>
-        {/* Carte Gratuit */}
-        <div style={styles.card}>
-          <div style={styles.cardHeader}>
-            <div style={styles.cardPlanIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(198, 80%, 80%)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <h2 style={styles.cardTitle}>Gratuit</h2>
-            <div style={styles.priceRow}>
-              <span style={styles.price}>0</span>
-              <span style={styles.priceUnit}>€/mois</span>
-            </div>
-          </div>
-
-          <div style={styles.featureList}>
-            <Feature icon="check" text="Setlists et édition illimitées" />
-            <Feature icon="check" text="3 exports par mois (PDF, JPEG, PNG)" />
-            <Feature icon="cross" text="Export .tl" />
-            <Feature icon="cross" text="Support prioritaire" />
-          </div>
-
-          <div style={styles.cardFooter}>
-            <span style={styles.currentPlan}>
-              {user && plan === 'free' ? '✔ Plan actuel' : ''}
-            </span>
-          </div>
+          <span>Paiement sécurisé par Stripe. Abonnement mensuel, annulable à tout moment.</span>
         </div>
-
-        {/* Carte Illimité */}
-        <div style={styles.cardHighlight}>
-          <div style={styles.badge}>Recommandé</div>
-          <div style={styles.cardHeader}>
-            <div style={styles.cardPlanIconHighlight}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-              </svg>
-            </div>
-            <h2 style={styles.cardTitleHighlight}>Illimité</h2>
-            <div style={styles.priceRow}>
-              <span style={styles.priceHighlight}>3,99</span>
-              <span style={styles.priceUnitHighlight}>€/mois</span>
-            </div>
-          </div>
-
-          <div style={styles.featureList}>
-            <Feature icon="check" text="Setlists et édition illimitées" />
-            <Feature icon="check" text="Exports illimités (PDF, JPEG, PNG)" />
-            <Feature icon="check" text="Export .tl inclus" />
-            <Feature icon="check" text="Annulation à tout moment" />
-          </div>
-
-          <div style={styles.cardFooter}>
-            <button
-              onClick={handleAction}
-              disabled={actionLoading || loading}
-              style={{
-                ...styles.ctaButton,
-                opacity: (actionLoading || loading) ? 0.6 : 1,
-                cursor: (actionLoading || loading) ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {actionLoading ? 'Chargement...' : getButtonLabel()}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div style={styles.footer}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="hsl(198, 60%, 45%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-          <line x1="1" y1="10" x2="23" y2="10" />
-        </svg>
-        <span>
-          Paiement sécurisé par Stripe. Abonnement mensuel, annulable à tout moment.
-        </span>
       </div>
     </div>
   );
@@ -177,16 +175,19 @@ const styles: Record<string, React.CSSProperties> = {
     minHeight: '100vh',
     background: 'hsl(222, 25%, 7%)',
     fontFamily: 'system-ui, -apple-system, sans-serif',
+    overflow: 'auto',
+  },
+  page: {
+    maxWidth: '860px',
+    margin: '0 auto',
+    padding: '0 24px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '0 20px',
-    position: 'relative',
-    overflow: 'auto',
+    minHeight: '100vh',
   },
   nav: {
     width: '100%',
-    maxWidth: '900px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -233,12 +234,9 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'stretch',
     flexWrap: 'wrap',
     width: '100%',
-    maxWidth: '820px',
-    flexShrink: 0,
   },
   card: {
     width: '340px',
-    maxWidth: 'calc(50vw - 40px)',
     padding: '32px 28px',
     background: 'rgba(255,255,255,0.03)',
     border: '1px solid rgba(255,255,255,0.06)',
@@ -246,12 +244,10 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     gap: '24px',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
     boxSizing: 'border-box',
   },
   cardHighlight: {
     width: '340px',
-    maxWidth: 'calc(50vw - 40px)',
     padding: '32px 28px',
     background: 'linear-gradient(135deg, rgba(61,143,168,0.08) 0%, rgba(61,143,168,0.02) 100%)',
     border: '1px solid rgba(61,143,168,0.35)',
@@ -261,7 +257,6 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '24px',
     position: 'relative',
     boxShadow: '0 0 30px rgba(61,143,168,0.08), 0 8px 32px rgba(0,0,0,0.2)',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
     boxSizing: 'border-box',
   },
   badge: {
@@ -384,17 +379,16 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#fff',
     fontSize: '14px',
     fontWeight: 600,
-    transition: 'opacity 0.2s, transform 0.1s',
     boxShadow: '0 4px 14px rgba(61,143,168,0.25)',
   },
   footer: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '8px',
     padding: '48px 0 40px',
     color: 'hsl(220, 15%, 40%)',
     fontSize: '12px',
-    textAlign: 'center' as const,
     maxWidth: '500px',
     lineHeight: 1.5,
   },
