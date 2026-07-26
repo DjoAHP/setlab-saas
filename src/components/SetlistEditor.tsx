@@ -316,36 +316,7 @@ export function SetlistEditor() {
                   />
                 </button>
               </div>
-              <button
-                onClick={() => setClearConfirm(true)}
-                title="Tout effacer"
-                style={{
-                  width: "32px",
-                  height: "32px",
-                  minWidth: "32px",
-                  padding: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "hsl(222, 18%, 17%)",
-                  border: "1px solid hsl(220, 15%, 22%)",
-                  color: "hsl(220, 15%, 40%)",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  transition: "color 0.15s, background 0.15s",
-                }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(220, 15%, 40%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)"; }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  <line x1="10" y1="11" x2="10" y2="17" />
-                  <line x1="14" y1="11" x2="14" y2="17" />
-                </svg>
-              </button>
-              </div>
+            </div>
             {stageEnabled && (
               <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                 <input
@@ -369,6 +340,35 @@ export function SetlistEditor() {
                   placeholder="SS"
                   style={{ ...inputStyle, width: "70px", textAlign: "center", fontSize: "13px" }}
                 />
+                <div style={{ flex: 1 }} />
+                <button
+                  onClick={() => setClearConfirm(true)}
+                  title="Tout effacer"
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    minWidth: "36px",
+                    padding: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "hsl(222, 18%, 17%)",
+                    border: "1px solid hsl(220, 15%, 22%)",
+                    color: "hsl(220, 15%, 40%)",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    transition: "color 0.15s, background 0.15s",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(0, 70%, 60%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "hsl(220, 15%, 40%)"; (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)"; }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    <line x1="10" y1="11" x2="10" y2="17" />
+                    <line x1="14" y1="11" x2="14" y2="17" />
+                  </svg>
+                </button>
               </div>
             )}
           </div>
