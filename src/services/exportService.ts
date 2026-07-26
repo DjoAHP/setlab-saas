@@ -15,31 +15,46 @@ function telecharger(blob: Blob, nomFichier: string) {
   URL.revokeObjectURL(url);
 }
 
-async function capturerElement(element: HTMLElement): Promise<HTMLCanvasElement> {
-  const savedOverflow: { el: HTMLElement; val: string }[] = [];
+async function basculerEtAttendre() {
+  return new Promise<void>((resolve) => {
+    const onReady = () => {
+      window.removeEventListener('setlab-preview-ready', onReady);
+      resolve();
+    };
+    window.addEventListener('setlab-preview-ready', onReady);
+    window.dispatchEvent(new CustomEvent('setlab-show-preview'));
+  });
+}
 
-  const apply = (el: HTMLElement) => {
+function retirerOverflowHidden(element: HTMLElement) {
+  const restore: (() => void)[] = [];
+  const handler = (el: HTMLElement) => {
     if (getComputedStyle(el).overflow === 'hidden') {
-      savedOverflow.push({ el, val: el.style.overflow });
+      const old = el.style.overflow;
       el.style.overflow = 'visible';
+      restore.push(() => { el.style.overflow = old; });
     }
   };
-
-  apply(element);
+  handler(element);
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, null);
   let n = walker.firstChild();
-  while (n) { apply(n as HTMLElement); n = walker.nextNode(); }
+  while (n) { handler(n as HTMLElement); n = walker.nextNode(); }
+  return restore;
+}
 
-  const canvas = await html2canvas(element, {
+async function capturer() {
+  const el = document.querySelector('.setlist-a4-container') as HTMLElement;
+  if (!el) throw new Error('Aperçu non trouvé');
+
+  const restore = retirerOverflowHidden(el);
+  const canvas = await html2canvas(el, {
     scale: 2,
     useCORS: true,
     backgroundColor: '#ffffff',
-    width: element.scrollWidth,
-    height: element.scrollHeight,
+    width: el.scrollWidth,
+    height: el.scrollHeight,
   });
-
-  savedOverflow.reverse().forEach(({ el, val }) => { el.style.overflow = val; });
-
+  restore.forEach((fn) => fn());
   return canvas;
 }
 
@@ -49,33 +64,31 @@ export function exporterTl(setlist: Setlist): void {
     stageTimeLimit: setlist.stageTimeLimit,
     songs: setlist.songs ?? [],
   };
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-    type: 'application/json',
-  });
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
   telecharger(blob, `${genererId(setlist.bandName)}.tl`);
 }
 
 export async function exporterPdf(): Promise<void> {
   if (window.innerWidth < 768) {
-    const element = document.querySelector('.setlist-a4-container') as HTMLElement;
-    if (!element) throw new Error('Aperçu non trouvé');
-    const canvas = await capturerElement(element);
+    await basculerEtAttendre();
+    const canvas = await capturer();
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
     const m = 10;
     const r = Math.min((pw - m * 2) / canvas.width, (ph - m * 2) / canvas.height);
     pdf.addImage(imgData, 'JPEG', (pw - canvas.width * r) / 2, m, canvas.width * r, canvas.height * r);
-    pdf.save(`${genererId(document.querySelector('.sl-print-title')?.textContent || 'setlist')}.pdf`);
+    pdf.save(`${genererId((document.querySelector('.sl-print-title')?.textContent || 'setlist').trim())}.pdf`);
   } else {
     window.print();
   }
 }
 
 export async function exporterJpeg(): Promise<void> {
-  const element = document.querySelector('.setlist-a4-container') as HTMLElement;
-  if (!element) throw new Error('Aperçu non trouvé');
-  const canvas = await capturerElement(element);
+  if (window.innerWidth < 768) {
+    await basculerEtAttendre();
+  }
+  const canvas = await capturer();
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) { reject(new Error('Échec JPEG')); return; }
@@ -86,9 +99,10 @@ export async function exporterJpeg(): Promise<void> {
 }
 
 export async function exporterPng(): Promise<void> {
-  const element = document.querySelector('.setlist-a4-container') as HTMLElement;
-  if (!element) throw new Error('Aperçu non trouvé');
-  const canvas = await capturerElement(element);
+  if (window.innerWidth < 768) {
+    await basculerEtAttendre();
+  }
+  const canvas = await capturer();
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) { reject(new Error('Échec PNG')); return; }

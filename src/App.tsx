@@ -35,6 +35,18 @@ function AppContent() {
     return () => window.removeEventListener('setlab-export-pdf', onExport);
   }, []);
 
+  // Bascule vers l'onglet preview pour les exports JPEG/PNG/PDF mobile
+  useEffect(() => {
+    const onShowPreview = () => {
+      setMobileTab('preview');
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('setlab-preview-ready'));
+      }, 300);
+    };
+    window.addEventListener('setlab-show-preview', onShowPreview);
+    return () => window.removeEventListener('setlab-show-preview', onShowPreview);
+  }, []);
+
   // Détection du retour Stripe Checkout
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -102,7 +114,7 @@ function AppContent() {
           {/* SetlistPreview toujours monté pour permettre les exports depuis n'importe quel onglet */}
           <div style={mobileTab === 'preview'
             ? { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }
-            : { position: 'absolute', left: '-9999px', top: 0, width: '375px', height: '530px' }
+            : { position: 'absolute', left: '-9999px', top: 0, width: '800px', height: '1131px' }
           }>
             <SetlistPreview />
           </div>
