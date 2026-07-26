@@ -1,13 +1,24 @@
 import Stripe from 'stripe';
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+let _stripe: Stripe | null = null;
+let _priceId: string | null = null;
 
-if (!stripeSecretKey) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is required');
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
+      throw new Error('STRIPE_SECRET_KEY environment variable is required');
+    }
+    _stripe = new Stripe(secretKey, {
+      apiVersion: '2024-06-20',
+    });
+  }
+  return _stripe;
 }
 
-export const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-06-20',
-});
-
-export const PRICE_ID = process.env.STRIPE_PRICE_ID || 'price_1TxSUYFFY7OiGi5kAC3jQRoN';
+export function getPriceId(): string {
+  if (!_priceId) {
+    _priceId = process.env.STRIPE_PRICE_ID || 'price_1TxSUYFFY7OiGi5kAC3jQRoN';
+  }
+  return _priceId;
+}

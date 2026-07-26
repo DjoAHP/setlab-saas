@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
-import { stripe } from './stripe';
+import { getStripe } from './stripe';
 import { HttpsError } from 'firebase-functions/v2/https';
 
 const SITE_URL = process.env.SITE_URL || 'http://localhost:5173';
@@ -14,6 +14,7 @@ export const createPortalSession = functions.onCall(async (request) => {
   }
 
   const userId = request.auth.uid;
+  const stripe = getStripe();
 
   const subDoc = await admin.firestore()
     .collection('users')

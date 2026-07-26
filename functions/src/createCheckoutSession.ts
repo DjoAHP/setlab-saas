@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
-import { stripe, PRICE_ID } from './stripe';
+import { getStripe, getPriceId } from './stripe';
 import { HttpsError } from 'firebase-functions/v2/https';
 
 admin.initializeApp();
@@ -16,6 +16,8 @@ export const createCheckoutSession = functions.onCall(async (request) => {
   }
 
   const userId = request.auth.uid;
+  const stripe = getStripe();
+  const PRICE_ID = getPriceId();
 
   const subDoc = await admin.firestore()
     .collection('users')

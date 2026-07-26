@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
-import { stripe } from './stripe';
+import { getStripe } from './stripe';
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
@@ -9,7 +9,7 @@ export const handleStripeWebhook = functions.onRequest(async (req, res) => {
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(req.rawBody, sig, WEBHOOK_SECRET);
   } catch (err) {
     console.error('Webhook signature verification failed.', err);
     res.status(400).send('Webhook signature verification failed.');
@@ -28,7 +28,7 @@ export const handleStripeWebhook = functions.onRequest(async (req, res) => {
       }
 
       const subscriptionId = session.subscription as string;
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
 
       await db
         .collection('users')
