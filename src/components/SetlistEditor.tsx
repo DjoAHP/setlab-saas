@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useSetlab } from "../context/SetlabContext";
 import type { Song } from "../types";
+import { ExportModal } from "./ExportModal";
 
 const TONALITES = [
   "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
@@ -34,6 +35,8 @@ export function SetlistEditor() {
   const [stageEnabled, setStageEnabled] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [ordreModalOuverte, setOrdreModalOuverte] = useState(false);
+
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const [dragFromIndex, setDragFromIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -251,34 +254,8 @@ export function SetlistEditor() {
             Setlist
           </span>
           <span style={{ color: "hsl(220, 15%, 28%)", fontSize: "11px" }}>|</span>
-          <button
-            onClick={exporterSetlist}
-            title="Exporter la setlist (.tl)"
-            style={{
-              background: "hsl(222, 18%, 17%)",
-              border: "1px solid hsl(220, 15%, 22%)",
-              color: "white",
-              padding: "2px 8px",
-              borderRadius: "6px",
-              fontSize: "11px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              transition: "background 0.15s",
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)"; }}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Export .tl
-          </button>
+          <img src="/assets/logo.svg" alt="SetLab" width="24" height="24" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
         </div>
-        <img src="/assets/logo.svg" alt="SetLab" width="24" height="24" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
       </div>
 
       {/* Zone défilable */}
@@ -550,25 +527,21 @@ export function SetlistEditor() {
             fontSize: "13px", cursor: "pointer", width: "100%",
           }}
         >
-          Importer .tl
+          Importer
         </button>
         <button
-          onClick={() => {
-            if (window.innerWidth < 768) {
-              window.dispatchEvent(new CustomEvent("setlab-export-pdf"));
-            } else {
-              window.print();
-            }
-          }}
+          onClick={() => setShowExportModal(true)}
           style={{
             background: "hsl(var(--tl-accent-button))", border: "1px solid hsl(var(--tl-accent-button-border))",
             color: "white", padding: "10px 16px", borderRadius: "8px",
             fontSize: "13px", cursor: "pointer", width: "100%",
           }}
         >
-          Exporter PDF
+          Exporter
         </button>
       </div>
+
+      {showExportModal && <ExportModal onClose={() => setShowExportModal(false)} />}
 
       {/* Modal ordre */}
       {ordreModalOuverte && (

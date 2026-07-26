@@ -8,6 +8,7 @@ import { ResetPasswordPage } from './components/auth/ResetPasswordPage';
 import { SetlistEditor } from './components/SetlistEditor';
 import { SetlistPreview } from './components/SetlistPreview';
 import { ChronoPanel } from './components/ChronoPanel';
+import { PricingPage } from './components/pricing/PricingPage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 function AppContent() {
@@ -32,6 +33,24 @@ function AppContent() {
     };
     window.addEventListener('setlab-export-pdf', onExport);
     return () => window.removeEventListener('setlab-export-pdf', onExport);
+  }, []);
+
+  // Détection du retour Stripe Checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'success') {
+      window.history.replaceState({}, '', '/app');
+      const toast = document.createElement('div');
+      toast.textContent = '✓ Passage au plan Illimité réussi !';
+      toast.style.cssText = `
+        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+        background: hsl(198, 60%, 35%); color: white;
+        padding: 12px 20px; border-radius: 8px; font-size: 13px;
+        z-index: 200; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
   }, []);
 
   const demarrerRedim = useCallback((e: React.MouseEvent) => {
@@ -163,6 +182,7 @@ export default function App() {
           }
         />
         <Route path="/" element={<Navigate to="/app" replace />} />
+        <Route path="/tarifs" element={<PricingPage />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </BrowserRouter>

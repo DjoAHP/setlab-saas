@@ -6,8 +6,10 @@ import {
   type ReactNode,
 } from 'react';
 import type { User } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { authService } from '../services/authService';
 import { syncService } from '../services/syncService';
+import { getFirebaseFirestore } from '../firebase/config';
 import { MigrationModal } from '../components/migration/MigrationModal';
 
 interface AuthContextValue {
@@ -34,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    const onUserChanged = (u: User | null) => {
+    const onUserChanged = async (u: User | null) => {
       setUser(u);
       if (u) {
         syncService.init(u.uid);
@@ -50,6 +52,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       authService.offUserChange(onUserChanged);
     };
   }, []);
+
+  // Initialiser le document subscription à la connexion
+  useEffect(() => {
+    if (!user) return;
+    const db = getFirebaseFirestore();
+    const subRef = doc(db, 'users', user.uid, 'subscription', 'main');
+    getDoc(subRef).then((snap) => {
+      if (!snap.exists()) {
+        setDoc(subRef, {
+          plan: 'free',
+          status: null,
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+          currentPeriodEnd: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
+    });
+  }, [user]);
 
   const signIn = async (email: string, password: string) => {
     await authService.signIn(email, password);
