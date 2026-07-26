@@ -56,6 +56,7 @@ export function SyncIndicator() {
         borderBottom: '1px solid hsl(220, 15%, 22%)',
       }}
     >
+      <style>{`@keyframes tl-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       <div ref={menuRef} style={{ position: 'relative', marginBottom: 8 }}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -157,17 +158,13 @@ export function SyncIndicator() {
         <span
           style={{
             display: 'inline-block',
-            animation: status === 'syncing' ? 'spin 1s linear infinite' : 'none',
+            animation: status === 'syncing' ? 'tl-spin 1s linear infinite' : 'none',
           }}
         >
           {cfg.icon}
         </span>
         <span>{cfg.text}</span>
       </div>
-
-      {status === 'syncing' && (
-        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-      )}
     </div>
   );
 }

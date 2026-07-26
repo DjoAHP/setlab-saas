@@ -1,5 +1,7 @@
 {
-  "projects": {},
+  "projects": {
+    "default": "setlab-saas"
+  },
   "targets": {},
   "etags": {}
 }

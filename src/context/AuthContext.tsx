@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    authService.onUserChange((u) => {
+    const onUserChanged = (u: User | null) => {
       setUser(u);
       if (u) {
         syncService.init(u.uid);
@@ -43,10 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         syncService.destroy();
         setShowMigration(false);
       }
-    });
+    };
+    authService.onUserChange(onUserChanged);
 
     return () => {
-      authService.offUserChange(() => {});
+      authService.offUserChange(onUserChanged);
     };
   }, []);
 
