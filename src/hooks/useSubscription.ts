@@ -10,7 +10,6 @@ import { useAuth } from '../context/AuthContext';
 interface SubscriptionState {
   plan: 'free' | 'unlimited';
   loading: boolean;
-  customerId: string | null;
 }
 
 export function useSubscription() {
@@ -19,12 +18,11 @@ export function useSubscription() {
   const [state, setState] = useState<SubscriptionState>({
     plan: 'free',
     loading: true,
-    customerId: null,
   });
 
   useEffect(() => {
     if (!user) {
-      setState({ plan: 'free', loading: false, customerId: null });
+      setState({ plan: 'free', loading: false });
       return;
     }
 
@@ -36,14 +34,13 @@ export function useSubscription() {
           setState({
             plan: data.plan || 'free',
             loading: false,
-            customerId: data.stripeCustomerId || null,
           });
         } else {
-          setState({ plan: 'free', loading: false, customerId: null });
+          setState({ plan: 'free', loading: false });
         }
       },
       () => {
-        setState({ plan: 'free', loading: false, customerId: null });
+        setState({ plan: 'free', loading: false });
       }
     );
 
@@ -52,21 +49,19 @@ export function useSubscription() {
 
   const refresh = useCallback(async () => {
     if (!user) {
-      setState({ plan: 'free', loading: false, customerId: null });
+      setState({ plan: 'free', loading: false });
       return;
     }
 
     try {
       const snap = await getDoc(doc(db, 'users', user.uid, 'subscription', 'main'));
       if (snap.exists()) {
-        const data = snap.data();
         setState({
-          plan: data.plan || 'free',
+          plan: snap.data().plan || 'free',
           loading: false,
-          customerId: data.stripeCustomerId || null,
         });
       } else {
-        setState({ plan: 'free', loading: false, customerId: null });
+        setState({ plan: 'free', loading: false });
       }
     } catch {
       setState((prev) => ({ ...prev, loading: false }));

@@ -1,11 +1,8 @@
 import { useState, useCallback } from 'react';
 import {
   doc,
-  getDoc,
   setDoc,
-  updateDoc,
-  increment,
-  collection,
+  runTransaction,
 } from 'firebase/firestore';
 import { getFirebaseFirestore } from '../firebase/config';
 import { useAuth } from '../context/AuthContext';
@@ -37,9 +34,10 @@ export function useExportQuota() {
     }
 
     try {
-      const subDoc = await getDoc(
-        doc(db, 'users', user.uid, 'subscription', 'main')
-      );
+      const subDoc = await runTransaction(db, async (transaction) => {
+        const ref = doc(db, 'users', user.uid, 'subscription', 'main');
+        return transaction.get(ref);
+      });
 
       if (subDoc.exists() && subDoc.data().plan === 'unlimited') {
         setState({ remaining: Infinity, total: Infinity, loading: false });
@@ -47,9 +45,10 @@ export function useExportQuota() {
       }
 
       const month = moisCourant();
-      const exportDoc = await getDoc(
-        doc(db, 'users', user.uid, 'exports', month)
-      );
+      const exportDoc = await runTransaction(db, async (transaction) => {
+        const ref = doc(db, 'users', user.uid, 'exports', month);
+        return transaction.get(ref);
+      });
 
       const count = exportDoc.exists() ? exportDoc.data().count : 0;
       setState({
@@ -58,7 +57,7 @@ export function useExportQuota() {
         loading: false,
       });
     } catch {
-      setState({ remaining: 1, total: 3, loading: false });
+      setState({ remaining: 0, total: 3, loading: false });
     }
   }, [user, db]);
 
@@ -66,49 +65,59 @@ export function useExportQuota() {
     if (!user) return false;
 
     try {
-      const subDoc = await getDoc(
-        doc(db, 'users', user.uid, 'subscription', 'main')
-      );
+      const subDoc = await runTransaction(db, async (transaction) => {
+        const ref = doc(db, 'users', user.uid, 'subscription', 'main');
+        return transaction.get(ref);
+      });
 
       if (subDoc.exists() && subDoc.data().plan === 'unlimited') {
         return true;
       }
 
       const month = moisCourant();
-      const exportDoc = await getDoc(
-        doc(db, 'users', user.uid, 'exports', month)
-      );
+      const exportDoc = await runTransaction(db, async (transaction) => {
+        const ref = doc(db, 'users', user.uid, 'exports', month);
+        return transaction.get(ref);
+      });
 
       const count = exportDoc.exists() ? exportDoc.data().count : 0;
       return count < 3;
     } catch {
-      return true;
+      return false;
     }
   }, [user, db]);
 
-  const incrementExport = useCallback(async (): Promise<void> => {
-    if (!user) return;
+  const incrementExport = useCallback(async (): Promise<boolean> => {
+    if (!user) return false;
 
     const month = moisCourant();
     const ref = doc(db, 'users', user.uid, 'exports', month);
 
     try {
-      const existing = await getDoc(ref);
-      if (existing.exists()) {
-        await updateDoc(ref, {
-          count: increment(1),
-          updatedAt: new Date().toISOString(),
-        });
-      } else {
-        await setDoc(ref, {
-          month,
-          count: 1,
-          updatedAt: new Date().toISOString(),
-        });
-      }
+      await runTransaction(db, async (transaction) => {
+        const existing = await transaction.get(ref);
+        if (existing.exists()) {
+          const current = existing.data().count;
+          if (current >= 3) {
+            throw new Error('Quota dépassé');
+          }
+          transaction.update(ref, {
+            count: current + 1,
+            updatedAt: new Date().toISOString(),
+          });
+        } else {
+          transaction.set(ref, {
+            month,
+            count: 1,
+            updatedAt: new Date().toISOString(),
+          });
+        }
+      });
       await refresh();
+      return true;
     } catch (err) {
       console.error('Erreur incrément export:', err);
+      return false;
     }
   }, [user, db, refresh]);
 

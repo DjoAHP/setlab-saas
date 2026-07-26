@@ -2,9 +2,15 @@ import * as functions from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 import { getStripe } from './stripe';
 
-const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 export const handleStripeWebhook = functions.onRequest(async (req, res) => {
+  if (!WEBHOOK_SECRET) {
+    console.error('STRIPE_WEBHOOK_SECRET is not configured');
+    res.status(500).send('Webhook secret not configured');
+    return;
+  }
+
   const sig = req.headers['stripe-signature'] as string;
 
   let event;
