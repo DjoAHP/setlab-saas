@@ -26,23 +26,23 @@ export function SyncIndicator() {
 
   const statusConfig: Record<string, { icon: string; text: string; color: string }> = {
     synced: {
-      icon: '\u2713',
-      text: 'Synchronis\u00e9',
+      icon: '✓',
+      text: 'Synchronisé',
       color: 'hsl(198, 80%, 80%)',
     },
     syncing: {
-      icon: '\u27f3',
-      text: 'Synchronisation\u2026',
+      icon: '⟳',
+      text: 'Synchronisation…',
       color: 'hsl(198, 80%, 80%)',
     },
     offline: {
-      icon: '\u2298',
+      icon: '⊘',
       text: 'Hors ligne',
       color: 'hsl(220, 15%, 50%)',
     },
     error: {
-      icon: '\u26a0',
-      text: error || '\u00c9chec de sync',
+      icon: '⚠',
+      text: error || 'Échec de sync',
       color: '#e57373',
     },
   };
@@ -93,7 +93,7 @@ export function SyncIndicator() {
           <span style={{ flex: 1, textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {user?.email || 'Utilisateur'}
           </span>
-          <span style={{ fontSize: 10 }}>{menuOpen ? '\u25b2' : '\u25bc'}</span>
+          <span style={{ fontSize: 10 }}>{menuOpen ? '▲' : '▼'}</span>
         </button>
 
         {menuOpen && (
@@ -140,7 +140,7 @@ export function SyncIndicator() {
               onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(229,115,115,0.1)')}
               onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
             >
-              Se d\u00e9connecter
+              Se déconnecter
             </button>
           </div>
         )}

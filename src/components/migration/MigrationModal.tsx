@@ -83,11 +83,11 @@ export function MigrationModal({ userId, onComplete }: MigrationModalProps) {
         }}
       >
         <h2 style={{ color: 'hsl(198, 48%, 94%)', fontSize: 18, margin: '0 0 12px', fontWeight: 600 }}>
-          Setlists locales d\u00e9tect\u00e9es
+          Setlists locales détectées
         </h2>
         <p style={{ color: 'hsl(220, 15%, 60%)', fontSize: 14, lineHeight: 1.5, margin: '0 0 20px' }}>
-          Nous avons trouv\u00e9 {orphanedSetlists.length} setlist
-          {orphanedSetlists.length > 1 ? 's' : ''} cr\u00e9\u00e9e
+          Nous avons trouvé {orphanedSetlists.length} setlist
+          {orphanedSetlists.length > 1 ? 's' : ''} créée
           {orphanedSetlists.length > 1 ? 's' : ''} avant votre connexion.
           Que souhaitez-vous en faire ?
         </p>
@@ -108,7 +108,7 @@ export function MigrationModal({ userId, onComplete }: MigrationModalProps) {
               opacity: processing ? 0.6 : 1,
             }}
           >
-            {processing ? 'Association\u2026' : '\uD83D\uDD04 Associer \u00e0 mon compte'}
+            {processing ? 'Association…' : '🔄 Associer à mon compte'}
           </button>
 
           <button
@@ -126,12 +126,12 @@ export function MigrationModal({ userId, onComplete }: MigrationModalProps) {
               opacity: processing ? 0.6 : 1,
             }}
           >
-            {'\uD83D\uDDD1\uFE0F Ignorer, repartir de z\u00e9ro'}
+            🗑️ Ignorer, repartir de zéro
           </button>
         </div>
 
         <p style={{ color: 'hsl(220, 15%, 40%)', fontSize: 12, marginTop: 16, lineHeight: 1.4 }}>
-          Vous pourrez importer un fichier .tl ult\u00e9rieurement.
+          Vous pourrez importer un fichier .tl ultérieurement.
         </p>
       </div>
     </div>
