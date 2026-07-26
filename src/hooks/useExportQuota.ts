@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import {
   doc,
-  setDoc,
+  getDoc,
   runTransaction,
 } from 'firebase/firestore';
 import { getFirebaseFirestore } from '../firebase/config';
@@ -34,23 +34,19 @@ export function useExportQuota() {
     }
 
     try {
-      const subDoc = await runTransaction(db, async (transaction) => {
-        const ref = doc(db, 'users', user.uid, 'subscription', 'main');
-        return transaction.get(ref);
-      });
+      const subRef = doc(db, 'users', user.uid, 'subscription', 'main');
+      const subSnap = await getDoc(subRef);
 
-      if (subDoc.exists() && subDoc.data().plan === 'unlimited') {
+      if (subSnap.exists() && subSnap.data().plan === 'unlimited') {
         setState({ remaining: Infinity, total: Infinity, loading: false });
         return;
       }
 
       const month = moisCourant();
-      const exportDoc = await runTransaction(db, async (transaction) => {
-        const ref = doc(db, 'users', user.uid, 'exports', month);
-        return transaction.get(ref);
-      });
+      const exportRef = doc(db, 'users', user.uid, 'exports', month);
+      const exportSnap = await getDoc(exportRef);
 
-      const count = exportDoc.exists() ? exportDoc.data().count : 0;
+      const count = exportSnap.exists() ? exportSnap.data().count : 0;
       setState({
         remaining: Math.max(0, 3 - count),
         total: 3,
@@ -65,22 +61,18 @@ export function useExportQuota() {
     if (!user) return false;
 
     try {
-      const subDoc = await runTransaction(db, async (transaction) => {
-        const ref = doc(db, 'users', user.uid, 'subscription', 'main');
-        return transaction.get(ref);
-      });
+      const subRef = doc(db, 'users', user.uid, 'subscription', 'main');
+      const subSnap = await getDoc(subRef);
 
-      if (subDoc.exists() && subDoc.data().plan === 'unlimited') {
+      if (subSnap.exists() && subSnap.data().plan === 'unlimited') {
         return true;
       }
 
       const month = moisCourant();
-      const exportDoc = await runTransaction(db, async (transaction) => {
-        const ref = doc(db, 'users', user.uid, 'exports', month);
-        return transaction.get(ref);
-      });
+      const exportRef = doc(db, 'users', user.uid, 'exports', month);
+      const exportSnap = await getDoc(exportRef);
 
-      const count = exportDoc.exists() ? exportDoc.data().count : 0;
+      const count = exportSnap.exists() ? exportSnap.data().count : 0;
       return count < 3;
     } catch {
       return false;
