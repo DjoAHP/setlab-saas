@@ -176,6 +176,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'hsl(222, 25%, 7%)',
     fontFamily: 'system-ui, -apple-system, sans-serif',
     overflow: 'auto',
+    display: 'block',
   },
   page: {
     maxWidth: '860px',
