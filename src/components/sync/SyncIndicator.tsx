@@ -57,7 +57,7 @@ export function SyncIndicator() {
       }}
     >
       <style>{`@keyframes tl-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-      <div ref={menuRef} style={{ position: 'relative', marginBottom: 8 }}>
+      <div ref={menuRef} style={{ position: 'relative', marginBottom: 8, display: 'flex', justifyContent: 'flex-end' }}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
@@ -97,7 +97,7 @@ export function SyncIndicator() {
             style={{
               position: 'absolute',
               top: '100%',
-              left: 0,
+              right: 0,
               marginTop: 4,
               minWidth: 180,
               background: 'hsl(222, 18%, 13%)',
@@ -146,6 +146,7 @@ export function SyncIndicator() {
         style={{
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'flex-end',
           gap: 6,
           fontSize: 12,
           color: cfg.color,
