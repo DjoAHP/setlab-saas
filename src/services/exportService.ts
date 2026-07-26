@@ -1,4 +1,5 @@
 import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import type { Setlist } from '../types';
 
 function genererId(nom: string): string {
@@ -26,10 +27,32 @@ export function exporterTl(setlist: Setlist): void {
   telecharger(blob, `${genererId(setlist.bandName)}.tl`);
 }
 
-export function exporterPdf(): void {
+export async function exporterPdf(): Promise<void> {
   const isMobile = window.innerWidth < 768;
   if (isMobile) {
-    window.dispatchEvent(new CustomEvent('setlab-export-pdf'));
+    const element = document.querySelector('.setlist-a4-container') as HTMLElement;
+    if (!element) throw new Error('Aperçu non trouvé');
+
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+    });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const usableWidth = pdfWidth - margin * 2;
+    const usableHeight = pdfHeight - margin * 2;
+    const ratio = Math.min(usableWidth / canvas.width, usableHeight / canvas.height);
+    const imgWidth = canvas.width * ratio;
+    const imgHeight = canvas.height * ratio;
+    const x = (pdfWidth - imgWidth) / 2;
+    const y = margin;
+    pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+    pdf.save(`${genererId(document.querySelector('.sl-print-title')?.textContent || 'setlist')}.pdf`);
   } else {
     window.print();
   }

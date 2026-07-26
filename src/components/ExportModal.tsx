@@ -55,7 +55,7 @@ export function ExportModal({ onClose }: ExportModalProps) {
       if (format === 'tl') {
         if (setlist) exporterTl(setlist);
       } else if (format === 'pdf') {
-        exporterPdf();
+        await exporterPdf();
       } else {
         await action();
         await incrementExport();
