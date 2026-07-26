@@ -63,14 +63,13 @@ export function SyncIndicator() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
+            gap: 6,
             background: 'none',
             border: 'none',
             color: 'hsl(198, 48%, 94%)',
             cursor: 'pointer',
             padding: 0,
             fontSize: 13,
-            width: '100%',
           }}
         >
           <div
@@ -90,7 +89,7 @@ export function SyncIndicator() {
           >
             {user?.email?.charAt(0).toUpperCase() || '?'}
           </div>
-          <span style={{ fontSize: 10, marginLeft: 'auto' }}>{menuOpen ? '▲' : '▼'}</span>
+          <span style={{ fontSize: 10 }}>{menuOpen ? '▲' : '▼'}</span>
         </button>
 
         {menuOpen && (
@@ -99,8 +98,8 @@ export function SyncIndicator() {
               position: 'absolute',
               top: '100%',
               left: 0,
-              right: 0,
               marginTop: 4,
+              minWidth: 180,
               background: 'hsl(222, 18%, 13%)',
               border: '1px solid hsl(220, 15%, 22%)',
               borderRadius: 8,
