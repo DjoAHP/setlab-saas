@@ -1,167 +1,400 @@
 import { useAuth } from '../../context/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export function PricingPage() {
   const { user } = useAuth();
-  const { plan, subscribe, manageBilling } = useSubscription();
+  const { plan, subscribe, manageBilling, loading } = useSubscription();
   const navigate = useNavigate();
-
-  const cardStyle: React.CSSProperties = {
-    flex: 1,
-    minWidth: '280px',
-    maxWidth: '380px',
-    padding: '32px 24px',
-    background: 'rgba(255,255,255,0.04)',
-    backdropFilter: 'blur(16px)',
-    WebkitBackdropFilter: 'blur(16px)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '12px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-  };
-
-  const highlightCard: React.CSSProperties = {
-    ...cardStyle,
-    border: '1px solid hsl(198, 60%, 45%)',
-    boxShadow: '0 0 24px rgba(61,143,168,0.15)',
-  };
+  const [actionLoading, setActionLoading] = useState(false);
 
   const handleAction = async () => {
     if (!user) {
       navigate('/register?redirect=/tarifs');
       return;
     }
-    if (plan === 'unlimited') {
-      await manageBilling();
-    } else {
-      await subscribe();
+    setActionLoading(true);
+    try {
+      if (plan === 'unlimited') {
+        await manageBilling();
+      } else {
+        await subscribe();
+      }
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const getButtonLabel = () => {
-    if (!user) return 'Créer un compte';
+    if (!user) return 'Créer un compte gratuit';
     if (plan === 'unlimited') return 'Gérer mon abonnement';
     return 'Passer au plan Illimité';
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'hsl(222, 25%, 7%)',
-        fontFamily: 'system-ui, sans-serif',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '40px 16px',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: '800px', marginBottom: '40px' }}>
-        <Link to="/app" style={{ color: 'hsl(220, 15%, 50%)', fontSize: '13px', textDecoration: 'none' }}>
-          ← Retour à l'application
+    <div style={styles.wrapper}>
+      {/* Navigation */}
+      <div style={styles.nav}>
+        <Link to="/app" style={styles.backLink}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          Retour
         </Link>
+        <div style={styles.logo}>SetLab</div>
       </div>
 
-      <h1 style={{ color: 'hsl(210, 30%, 90%)', fontSize: '28px', fontWeight: 'bold', margin: '0 0 8px', textAlign: 'center' }}>
-        SetLab
-      </h1>
-      <p style={{ color: 'hsl(220, 15%, 50%)', fontSize: '14px', margin: '0 0 32px', textAlign: 'center' }}>
-        Choisissez la formule qui vous convient
-      </p>
+      {/* Hero */}
+      <div style={styles.hero}>
+        <h1 style={styles.title}>
+          Trouvez la formule <span style={{ color: 'hsl(198, 80%, 80%)' }}>adaptée</span>
+        </h1>
+        <p style={styles.subtitle}>
+          Créez, éditez et exportez vos setlists en toute liberté
+        </p>
+      </div>
 
-      <div style={{
-        display: 'flex', gap: '24px', flexWrap: 'wrap',
-        justifyContent: 'center', width: '100%', maxWidth: '800px',
-      }}>
-        <div style={cardStyle}>
-          <div>
-            <h2 style={{ color: 'hsl(210, 30%, 90%)', fontSize: '18px', fontWeight: 600, margin: '0 0 4px' }}>
-              Gratuit
-            </h2>
-            <div style={{ color: 'hsl(210, 30%, 90%)', fontSize: '32px', fontWeight: 'bold' }}>
-              0 €
-              <span style={{ color: 'hsl(220, 15%, 50%)', fontSize: '14px', fontWeight: 400 }}>/mois</span>
+      {/* Cartes */}
+      <div style={styles.cardsRow}>
+        {/* Carte Gratuit */}
+        <div style={styles.card}>
+          <div style={styles.cardHeader}>
+            <div style={styles.cardPlanIcon}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(198, 80%, 80%)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <h2 style={styles.cardTitle}>Gratuit</h2>
+            <div style={styles.priceRow}>
+              <span style={styles.price}>0</span>
+              <span style={styles.priceUnit}>€/mois</span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
-            <Feature text="Setlists et édition illimitées" included />
-            <Feature text="3 exports par mois (PDF, JPEG, PNG)" included />
-            <Feature text="Export .tl" included={false} />
-            <Feature text="Support prioritaire" included={false} />
+          <div style={styles.featureList}>
+            <Feature icon="check" text="Setlists et édition illimitées" />
+            <Feature icon="check" text="3 exports par mois (PDF, JPEG, PNG)" />
+            <Feature icon="cross" text="Export .tl" />
+            <Feature icon="cross" text="Support prioritaire" />
+          </div>
+
+          <div style={styles.cardFooter}>
+            <span style={styles.currentPlan}>
+              {user && plan === 'free' ? '✔ Plan actuel' : ''}
+            </span>
           </div>
         </div>
 
-        <div style={highlightCard}>
-          <div>
-            <div style={{
-              display: 'inline-block',
-              padding: '4px 10px',
-              borderRadius: '6px',
-              background: 'hsl(198, 60%, 25%)',
-              color: 'hsl(198, 80%, 80%)',
-              fontSize: '11px',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: '8px',
-            }}>
-              Recommandé
+        {/* Carte Illimité */}
+        <div style={styles.cardHighlight}>
+          <div style={styles.badge}>Recommandé</div>
+          <div style={styles.cardHeader}>
+            <div style={styles.cardPlanIconHighlight}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
             </div>
-            <h2 style={{ color: 'hsl(210, 30%, 90%)', fontSize: '18px', fontWeight: 600, margin: '0 0 4px' }}>
-              Illimité
-            </h2>
-            <div style={{ color: 'hsl(198, 80%, 80%)', fontSize: '32px', fontWeight: 'bold' }}>
-              3,99 €
-              <span style={{ color: 'hsl(220, 15%, 50%)', fontSize: '14px', fontWeight: 400 }}>/mois</span>
+            <h2 style={styles.cardTitleHighlight}>Illimité</h2>
+            <div style={styles.priceRow}>
+              <span style={styles.priceHighlight}>3,99</span>
+              <span style={styles.priceUnitHighlight}>€/mois</span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
-            <Feature text="Setlists et édition illimitées" included />
-            <Feature text="Exports illimités (PDF, JPEG, PNG)" included />
-            <Feature text="Export .tl inclus" included />
-            <Feature text="Annulation à tout moment" included />
+          <div style={styles.featureList}>
+            <Feature icon="check" text="Setlists et édition illimitées" />
+            <Feature icon="check" text="Exports illimités (PDF, JPEG, PNG)" />
+            <Feature icon="check" text="Export .tl inclus" />
+            <Feature icon="check" text="Annulation à tout moment" />
           </div>
 
-          <button
-            onClick={handleAction}
-            style={{
-              width: '100%', padding: '12px 16px', borderRadius: '8px',
-              border: '1px solid hsl(198, 60%, 45%)',
-              background: 'hsl(198, 60%, 35%)',
-              color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-            }}
-          >
-            {getButtonLabel()}
-          </button>
+          <div style={styles.cardFooter}>
+            <button
+              onClick={handleAction}
+              disabled={actionLoading || loading}
+              style={{
+                ...styles.ctaButton,
+                opacity: (actionLoading || loading) ? 0.6 : 1,
+                cursor: (actionLoading || loading) ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {actionLoading ? 'Chargement...' : getButtonLabel()}
+            </button>
+          </div>
         </div>
       </div>
 
-      <p style={{ color: 'hsl(220, 15%, 40%)', fontSize: '12px', marginTop: '40px', textAlign: 'center' }}>
-        Paiement sécurisé par Stripe. Abonnement mensuel, annulable à tout moment depuis votre portail client.
-      </p>
+      {/* Footer */}
+      <div style={styles.footer}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="hsl(198, 60%, 45%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+          <line x1="1" y1="10" x2="23" y2="10" />
+        </svg>
+        <span>
+          Paiement sécurisé par Stripe. Abonnement mensuel, annulable à tout moment.
+        </span>
+      </div>
     </div>
   );
 }
 
-function Feature({ text, included }: { text: string; included: boolean }) {
+function Feature({ icon, text }: { icon: 'check' | 'cross'; text: string }) {
+  const isCheck = icon === 'check';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{
-        color: included ? 'hsl(198, 80%, 80%)' : 'hsl(220, 15%, 35%)',
-        fontSize: '14px', fontWeight: 'bold', width: '20px', textAlign: 'center',
+    <div style={styles.featureRow}>
+      <div style={{
+        ...styles.featureIcon,
+        background: isCheck ? 'rgba(61,143,168,0.15)' : 'rgba(255,255,255,0.04)',
+        border: isCheck ? '1px solid rgba(61,143,168,0.3)' : '1px solid rgba(255,255,255,0.06)',
       }}>
-        {included ? '✓' : '—'}
-      </span>
+        {isCheck ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(198, 80%, 80%)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="hsl(220, 15%, 35%)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        )}
+      </div>
       <span style={{
-        color: included ? 'hsl(210, 30%, 85%)' : 'hsl(220, 15%, 40%)',
+        color: isCheck ? 'hsl(210, 30%, 85%)' : 'hsl(220, 15%, 45%)',
         fontSize: '13px',
+        lineHeight: '1.4',
       }}>
         {text}
       </span>
     </div>
   );
 }
+
+const styles: Record<string, React.CSSProperties> = {
+  wrapper: {
+    minHeight: '100vh',
+    background: 'hsl(222, 25%, 7%)',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '0 20px',
+    position: 'relative',
+    overflow: 'auto',
+  },
+  nav: {
+    width: '100%',
+    maxWidth: '900px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '20px 0',
+    flexShrink: 0,
+  },
+  backLink: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    color: 'hsl(220, 15%, 50%)',
+    fontSize: '13px',
+    textDecoration: 'none',
+    transition: 'color 0.15s',
+  },
+  logo: {
+    fontSize: '16px',
+    fontWeight: 700,
+    color: 'hsl(198, 80%, 80%)',
+    letterSpacing: '1px',
+  },
+  hero: {
+    textAlign: 'center',
+    padding: '60px 0 48px',
+    maxWidth: '600px',
+  },
+  title: {
+    color: 'hsl(210, 30%, 90%)',
+    fontSize: '32px',
+    fontWeight: 700,
+    margin: '0 0 12px',
+    lineHeight: 1.2,
+  },
+  subtitle: {
+    color: 'hsl(220, 15%, 50%)',
+    fontSize: '15px',
+    margin: 0,
+    lineHeight: 1.5,
+  },
+  cardsRow: {
+    display: 'flex',
+    gap: '24px',
+    justifyContent: 'center',
+    alignItems: 'stretch',
+    width: '100%',
+    maxWidth: '780px',
+    flexShrink: 0,
+  },
+  card: {
+    flex: 1,
+    maxWidth: '370px',
+    minWidth: '280px',
+    padding: '32px 28px',
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.06)',
+    borderRadius: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+  },
+  cardHighlight: {
+    flex: 1,
+    maxWidth: '370px',
+    minWidth: '280px',
+    padding: '32px 28px',
+    background: 'linear-gradient(135deg, rgba(61,143,168,0.08) 0%, rgba(61,143,168,0.02) 100%)',
+    border: '1px solid rgba(61,143,168,0.35)',
+    borderRadius: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
+    position: 'relative',
+    boxShadow: '0 0 30px rgba(61,143,168,0.08), 0 8px 32px rgba(0,0,0,0.2)',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+  },
+  badge: {
+    position: 'absolute',
+    top: '-12px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    padding: '6px 16px',
+    borderRadius: '20px',
+    background: 'hsl(198, 60%, 35%)',
+    color: '#fff',
+    fontSize: '11px',
+    fontWeight: 700,
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.08em',
+    whiteSpace: 'nowrap',
+    boxShadow: '0 4px 12px rgba(61,143,168,0.3)',
+  },
+  cardHeader: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+  cardPlanIcon: {
+    width: '44px',
+    height: '44px',
+    borderRadius: '12px',
+    background: 'rgba(255,255,255,0.04)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardPlanIconHighlight: {
+    width: '44px',
+    height: '44px',
+    borderRadius: '12px',
+    background: 'hsl(198, 60%, 35%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardTitle: {
+    color: 'hsl(210, 30%, 90%)',
+    fontSize: '20px',
+    fontWeight: 600,
+    margin: 0,
+  },
+  cardTitleHighlight: {
+    color: 'hsl(210, 30%, 90%)',
+    fontSize: '20px',
+    fontWeight: 600,
+    margin: 0,
+  },
+  priceRow: {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '4px',
+  },
+  price: {
+    fontSize: '36px',
+    fontWeight: 700,
+    color: 'hsl(210, 30%, 90%)',
+    lineHeight: 1,
+  },
+  priceUnit: {
+    fontSize: '14px',
+    color: 'hsl(220, 15%, 45%)',
+    fontWeight: 400,
+  },
+  priceHighlight: {
+    fontSize: '36px',
+    fontWeight: 700,
+    color: 'hsl(198, 80%, 80%)',
+    lineHeight: 1,
+  },
+  priceUnitHighlight: {
+    fontSize: '14px',
+    color: 'hsl(198, 60%, 60%)',
+    fontWeight: 400,
+  },
+  featureList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    flex: 1,
+  },
+  featureRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+  },
+  featureIcon: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  cardFooter: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  },
+  currentPlan: {
+    textAlign: 'center',
+    color: 'hsl(198, 80%, 80%)',
+    fontSize: '13px',
+    fontWeight: 500,
+    padding: '12px 16px',
+  },
+  ctaButton: {
+    width: '100%',
+    padding: '14px 20px',
+    borderRadius: '10px',
+    border: 'none',
+    background: 'linear-gradient(135deg, hsl(198, 60%, 38%) 0%, hsl(198, 60%, 30%) 100%)',
+    color: '#fff',
+    fontSize: '14px',
+    fontWeight: 600,
+    transition: 'opacity 0.2s, transform 0.1s',
+    boxShadow: '0 4px 14px rgba(61,143,168,0.25)',
+  },
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '48px 0 40px',
+    color: 'hsl(220, 15%, 40%)',
+    fontSize: '12px',
+    textAlign: 'center' as const,
+    maxWidth: '500px',
+    lineHeight: 1.5,
+  },
+};
