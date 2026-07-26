@@ -222,7 +222,7 @@ export function SetlistPreview() {
           .setlist-a4-container,
           .setlist-a4-container * { visibility: visible; }
           .setlist-a4-container {
-            position: fixed !important;
+            position: absolute !important;
             left: 0; top: 0;
             width: 210mm !important;
             height: 297mm !important;

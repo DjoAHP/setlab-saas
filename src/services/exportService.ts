@@ -27,7 +27,12 @@ export function exporterTl(setlist: Setlist): void {
 }
 
 export function exporterPdf(): void {
-  window.print();
+  const isMobile = window.innerWidth < 768;
+  if (isMobile) {
+    window.dispatchEvent(new CustomEvent('setlab-export-pdf'));
+  } else {
+    window.print();
+  }
 }
 
 export async function exporterJpeg(): Promise<void> {
