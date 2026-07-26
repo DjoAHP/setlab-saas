@@ -102,7 +102,7 @@ function AppContent() {
           {/* SetlistPreview toujours monté pour permettre les exports depuis n'importe quel onglet */}
           <div style={mobileTab === 'preview'
             ? { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }
-            : { position: 'absolute', left: '-9999px', top: 0, width: '800px', height: '1131px' }
+            : { position: 'absolute', left: '-9999px', top: 0, width: '375px', height: '530px' }
           }>
             <SetlistPreview />
           </div>
