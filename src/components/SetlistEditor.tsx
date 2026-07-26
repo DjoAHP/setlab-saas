@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useSetlab } from "../context/SetlabContext";
 import type { Song } from "../types";
 import { ExportModal } from "./ExportModal";
+import { useSubscription } from "../hooks/useSubscription";
 
 const TONALITES = [
   "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
@@ -37,6 +38,7 @@ export function SetlistEditor() {
   const [ordreModalOuverte, setOrdreModalOuverte] = useState(false);
 
   const [showExportModal, setShowExportModal] = useState(false);
+  const { plan } = useSubscription();
 
   const [dragFromIndex, setDragFromIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -521,10 +523,14 @@ export function SetlistEditor() {
       <div style={{ padding: "10px", borderTop: "1px solid hsl(220, 15%, 18%)", flexShrink: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
         <button
           onClick={handleImporter}
+          disabled={plan === 'free'}
+          title={plan === 'free' ? 'Réservé au plan illimité' : ''}
           style={{
-            background: "hsl(222, 18%, 17%)", border: "1px solid hsl(220, 15%, 22%)",
-            color: "white", padding: "10px 16px", borderRadius: "8px",
-            fontSize: "13px", cursor: "pointer", width: "100%",
+            background: plan === 'free' ? "hsl(222, 18%, 12%)" : "hsl(222, 18%, 17%)",
+            border: plan === 'free' ? "1px solid hsl(220, 15%, 18%)" : "1px solid hsl(220, 15%, 22%)",
+            color: plan === 'free' ? "hsl(220, 15%, 30%)" : "white",
+            padding: "10px 16px", borderRadius: "8px",
+            fontSize: "13px", cursor: plan === 'free' ? "not-allowed" : "pointer", width: "100%",
           }}
         >
           Importer

@@ -12,6 +12,8 @@ function moisCourant(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
+const QUOTA_MAX = 2;
+
 interface ExportQuotaState {
   remaining: number;
   total: number;
@@ -22,8 +24,8 @@ export function useExportQuota() {
   const { user } = useAuth();
   const db = getFirebaseFirestore();
   const [state, setState] = useState<ExportQuotaState>({
-    remaining: 3,
-    total: 3,
+    remaining: QUOTA_MAX,
+    total: QUOTA_MAX,
     loading: true,
   });
 
@@ -48,12 +50,12 @@ export function useExportQuota() {
 
       const count = exportSnap.exists() ? exportSnap.data().count : 0;
       setState({
-        remaining: Math.max(0, 3 - count),
-        total: 3,
+        remaining: Math.max(0, QUOTA_MAX - count),
+        total: QUOTA_MAX,
         loading: false,
       });
     } catch {
-      setState({ remaining: 0, total: 3, loading: false });
+      setState({ remaining: 0, total: QUOTA_MAX, loading: false });
     }
   }, [user, db]);
 
@@ -73,7 +75,7 @@ export function useExportQuota() {
       const exportSnap = await getDoc(exportRef);
 
       const count = exportSnap.exists() ? exportSnap.data().count : 0;
-      return count < 3;
+      return count < QUOTA_MAX;
     } catch {
       return false;
     }
@@ -90,7 +92,7 @@ export function useExportQuota() {
         const existing = await transaction.get(ref);
         if (existing.exists()) {
           const current = existing.data().count;
-          if (current >= 3) {
+          if (current >= QUOTA_MAX) {
             throw new Error('Quota dépassé');
           }
           transaction.update(ref, {

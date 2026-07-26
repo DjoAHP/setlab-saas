@@ -31,7 +31,7 @@ export function ExportModal({ onClose }: ExportModalProps) {
   const handleExport = async (format: string, action: () => Promise<void> | void) => {
     setError(null);
 
-    if (format !== 'tl') {
+    if (format === 'jpeg' || format === 'png') {
       const allowed = await canExport();
       if (!allowed) {
         setError('Quota mensuel atteint. Passez au plan Illimité pour exporter sans limite.');
@@ -43,11 +43,11 @@ export function ExportModal({ onClose }: ExportModalProps) {
     try {
       if (format === 'tl') {
         if (setlist) exporterTl(setlist);
+      } else if (format === 'pdf') {
+        exporterPdf();
       } else {
         await action();
-        if (format !== 'pdf') {
-          await incrementExport();
-        }
+        await incrementExport();
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de l\'export');
@@ -132,9 +132,10 @@ export function ExportModal({ onClose }: ExportModalProps) {
           </button>
 
           <button
-            disabled={exporting === 'pdf'}
+            disabled={plan === 'free' || exporting === 'pdf'}
             onClick={() => handleExport('pdf', exporterPdf)}
-            style={btnStyle(exporting === 'pdf')}
+            title={plan === 'free' ? 'Réservé au plan illimité' : ''}
+            style={btnStyle(plan === 'free' || exporting === 'pdf')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -143,6 +144,7 @@ export function ExportModal({ onClose }: ExportModalProps) {
               <line x1="16" y1="17" x2="8" y2="17" />
             </svg>
             PDF
+            {plan === 'free' && <span style={{ fontSize: '10px', color: 'hsl(220, 15%, 40%)', marginLeft: 'auto' }}>Réservé plan illimité</span>}
             {exporting === 'pdf' && <span style={{ marginLeft: 'auto', fontSize: '11px' }}>...</span>}
           </button>
 

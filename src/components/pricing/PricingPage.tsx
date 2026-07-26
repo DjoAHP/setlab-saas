@@ -75,7 +75,8 @@ export function PricingPage() {
 
           <div style={styles.featureList}>
             <Feature icon="check" text="Setlists et édition illimitées" />
-            <Feature icon="check" text="3 exports par mois (PDF, JPEG, PNG)" />
+            <Feature icon="check" text="2 exports par mois (JPEG, PNG)" />
+            <Feature icon="cross" text="Export PDF" />
             <Feature icon="cross" text="Export .tl" />
             <Feature icon="cross" text="Support prioritaire" />
           </div>
