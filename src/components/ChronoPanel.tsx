@@ -168,6 +168,11 @@ export function ChronoPanel() {
                 display: "flex", alignItems: "center", gap: 6,
               }}
             >
+              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {selectedSong
+                  ? `${selectedSong.position.toString().padStart(2, "0")}. ${selectedSong.title}`
+                  : "Sélectionner un morceau..."}
+              </span>
               {selectedSong && selectedSong.time ? (
                 <span style={{
                   width: 8, height: 8, borderRadius: '50%',
@@ -175,14 +180,7 @@ export function ChronoPanel() {
                   boxShadow: '0 0 6px hsl(var(--tl-accent-text))',
                   flexShrink: 0,
                 }} />
-              ) : (
-                <span style={{ width: 8, flexShrink: 0 }} />
-              )}
-              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {selectedSong
-                  ? `${selectedSong.position.toString().padStart(2, "0")}. ${selectedSong.title}`
-                  : "Sélectionner un morceau..."}
-              </span>
+              ) : null}
               <span style={{ fontSize: 10, color: 'hsl(220, 15%, 45%)' }}>{songDropdownOpen ? '▲' : '▼'}</span>
             </button>
 
@@ -220,6 +218,9 @@ export function ChronoPanel() {
                     onMouseEnter={(e) => { if (selectedSongId !== song.id) e.currentTarget.style.background = 'hsl(220, 15%, 18%)'; }}
                     onMouseLeave={(e) => { if (selectedSongId !== song.id) e.currentTarget.style.background = 'transparent'; }}
                   >
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                      {song.position.toString().padStart(2, "0")}. {song.title}
+                    </span>
                     {song.time ? (
                       <span style={{
                         width: 8, height: 8, borderRadius: '50%',
@@ -227,12 +228,7 @@ export function ChronoPanel() {
                         boxShadow: '0 0 6px hsl(var(--tl-accent-text))',
                         flexShrink: 0,
                       }} />
-                    ) : (
-                      <span style={{ width: 8, flexShrink: 0 }} />
-                    )}
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {song.position.toString().padStart(2, "0")}. {song.title}
-                    </span>
+                    ) : null}
                   </button>
                 ))}
               </div>
