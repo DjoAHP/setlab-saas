@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { z } from "zod";
 import { db } from "../db/schema";
 import type { Setlist, Song } from "../types";
+import { syncService } from "../services/syncService";
 
 const SongSchema = z.object({
   id: z.string().optional(),
@@ -64,6 +65,7 @@ export function useSetlabStore() {
     if (updated) {
       try {
         await db.setlists.put(updated);
+        syncService.pushSetlist(updated);
       } catch (err) {
         console.error("Erreur lors de la sauvegarde Dexie :", err);
       }
@@ -178,6 +180,16 @@ export function useSetlabStore() {
     URL.revokeObjectURL(url);
   }, [setlist]);
 
+  const setUserId = useCallback(async (userId: string) => {
+    setSetlist((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, userId, updatedAt: maintenant() };
+      db.setlists.put(updated);
+      syncService.pushSetlist(updated);
+      return updated;
+    });
+  }, []);
+
   return {
     setlist,
     loading,
@@ -189,5 +201,6 @@ export function useSetlabStore() {
     reorderSong,
     importerSetlist,
     exporterSetlist,
+    setUserId,
   };
 }

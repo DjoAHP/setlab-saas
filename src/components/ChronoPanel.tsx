@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSetlab } from "../context/SetlabContext";
 import chronoService, { type ChronoServiceState } from "../services/chronoService";
+import { SyncIndicator } from "./sync/SyncIndicator";
 
 export function ChronoPanel() {
   const { setlist, updateSong } = useSetlab();
@@ -64,6 +65,8 @@ export function ChronoPanel() {
         display: "flex", flexDirection: "column", overflow: "hidden",
       }}
     >
+      {/* Sync + Profil */}
+      <SyncIndicator />
       {/* En-tête */}
       <div style={{ padding: "10px 12px", borderBottom: "1px solid hsl(220, 15%, 16%)", flexShrink: 0 }}>
         <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(220, 15%, 45%)" }}>

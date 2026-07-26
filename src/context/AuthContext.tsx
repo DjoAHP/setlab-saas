@@ -7,6 +7,8 @@ import {
 } from 'react';
 import type { User } from 'firebase/auth';
 import { authService } from '../services/authService';
+import { syncService } from '../services/syncService';
+import { MigrationModal } from '../components/migration/MigrationModal';
 
 interface AuthContextValue {
   user: User | null;
@@ -23,6 +25,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showMigration, setShowMigration] = useState(false);
 
   useEffect(() => {
     authService.init().then(() => {
@@ -33,6 +36,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     authService.onUserChange((u) => {
       setUser(u);
+      if (u) {
+        syncService.init(u.uid);
+        setTimeout(() => setShowMigration(true), 500);
+      } else {
+        syncService.destroy();
+        setShowMigration(false);
+      }
     });
 
     return () => {
@@ -65,6 +75,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{ user, loading, signIn, signUp, signInWithGoogle, logout, resetPassword }}
     >
       {children}
+      {showMigration && user && (
+        <MigrationModal
+          userId={user.uid}
+          onComplete={() => setShowMigration(false)}
+        />
+      )}
     </AuthContext.Provider>
   );
 }
