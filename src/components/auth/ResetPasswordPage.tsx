@@ -15,17 +15,16 @@ export function ResetPasswordPage() {
     setSubmitting(true);
     try {
       await resetPassword(email);
-      setSent(true);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Erreur';
-      if (msg.includes('user-not-found')) {
-        setError('Aucun compte trouvé avec cet email');
-      } else {
-        setError(msg);
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.includes('too-many-requests')) {
+        setError('Trop de demandes. Réessayez plus tard.');
+        setSubmitting(false);
+        return;
       }
-    } finally {
-      setSubmitting(false);
     }
+    setSent(true);
+    setSubmitting(false);
   };
 
   return (

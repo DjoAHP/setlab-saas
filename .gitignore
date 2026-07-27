@@ -9,3 +9,7 @@ docs/
 
 # Local Netlify folder
 .netlify
+
+# Opencode
+AGENTS.md
+.opencode

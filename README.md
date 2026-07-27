@@ -11,6 +11,8 @@ SaaS autonome qui permet de créer une setlist, chronométrer chaque morceau en 
 - **Frontend** : React 19 + TypeScript + Vite 6 + Tailwind v3 + React Router v7
 - **Stockage local** : Dexie.js (IndexedDB), `userId` lié au compte cloud
 - **Cloud** : Firebase Auth (email/mdp + Google) + Firestore (sync par userId)
+- **Paiement** : Stripe (abonnement Illimité) via Cloud Functions v2 (`europe-west1`)
+- **Secrets** : Firebase Secret Manager (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`) — aucun secret en `.env`
 - **PWA** : `vite-plugin-pwa` avec Workbox (offline, installable)
 - **Export** : `window.print()` via CSS `@media print`
 
@@ -23,11 +25,38 @@ npm run lint      # ESLint
 npm run preview   # Prévisualisation du build
 ```
 
+### Cloud Functions (dossier `functions/`)
+
+```bash
+npm run build          # Compilation TypeScript
+npm run deploy         # Build + firebase deploy --only functions
+npm run secrets:set    # Saisie des 3 secrets Stripe dans Secret Manager
+npm run secrets:check  # Vérification des secrets configurés
+```
+
+Le paramètre public `SITE_URL` est défini dans `functions/.env.setlab-saas` (committable, non-secret).
+
 ## Authentification & synchronisation
 
 L'app **nécessite un compte** (email/mdp ou Google). Les setlists sont stockées localement dans Dexie et synchronisées en arrière-plan vers Firestore (collection `setlists`, accès restreint au `userId` propriétaire). En cas de données locales existantes avant la première connexion, une modal propose de les associer au compte ou de les ignorer.
 
 Le statut de synchronisation est visible en haut de la sidebar ChronoPanel (synced, syncing, offline, error), avec un menu profil pour la déconnexion.
+
+## Abonnement & paiements (Stripe)
+
+Plan **Gratuit** (3 exports/mois) ou **Illimité** (3,99 €/mois). Trois Cloud Functions v2 :
+
+```
+functions/src/
+├── admin.ts                  # Init unique du SDK Admin (guard)
+├── params.ts                 # Paramètre public SITE_URL (defineString)
+├── stripe.ts                 # Client Stripe + secrets (defineSecret)
+├── createCheckoutSession.ts  # Callable — création session Checkout
+├── createPortalSession.ts    # Callable — portail de facturation
+└── handleWebhook.ts          # HTTPS — webhook Stripe (signature vérifiée)
+```
+
+Le webhook (`checkout.session.completed`, `customer.subscription.updated/deleted`) synchronise `users/{uid}/subscription/main` dans Firestore. La requête collection-group sur `stripeCustomerId` s'appuie sur un index dédié (`firestore.indexes.json`).
 
 ## Structure
 

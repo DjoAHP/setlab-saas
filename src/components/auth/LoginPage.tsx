@@ -17,10 +17,8 @@ export function LoginPage() {
       await signIn(email, password);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Erreur de connexion';
-      if (msg.includes('invalid-credential') || msg.includes('wrong-password')) {
+      if (msg.includes('invalid-credential') || msg.includes('wrong-password') || msg.includes('user-not-found')) {
         setError('Email ou mot de passe incorrect');
-      } else if (msg.includes('user-not-found')) {
-        setError('Aucun compte trouvé avec cet email');
       } else if (msg.includes('too-many-requests')) {
         setError('Trop de tentatives. Réessayez plus tard.');
       } else {
