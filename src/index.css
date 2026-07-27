@@ -44,3 +44,33 @@ body {
 ::-webkit-scrollbar-track { background: hsl(var(--tl-bg-deep)); }
 ::-webkit-scrollbar-thumb { background: hsl(var(--tl-border)); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: hsl(198, 48%, 60%); }
+
+/* Slider — outil « Taille du texte » (barre d'outils de l'éditeur) */
+.tl-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 4px;
+  background: hsl(222, 18%, 14%);
+  outline: none;
+  cursor: pointer;
+}
+.tl-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: hsl(var(--tl-accent-button));
+  border: 1px solid hsl(var(--tl-accent-button-border));
+  cursor: pointer;
+}
+.tl-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: hsl(var(--tl-accent-button));
+  border: 1px solid hsl(var(--tl-accent-button-border));
+  cursor: pointer;
+}

@@ -78,7 +78,7 @@ Thème sombre bleu-nuit + accent cyan. Toutes les valeurs ci-dessous sont celles
 ### Échelles autorisées (ne JAMAIS sortir de ces valeurs)
 
 - **fontSize** : `10px` (micro/selects tonalité) · `11px` (labels, en-têtes uppercase, hints) · `12px` (liste, tab bar, toasts) · `13px` (boutons, inputs éditeur) · `14px` (inputs auth, titres modales). Au-delà = titres de pages uniquement (18/20/28/32).
-- **borderRadius** : `4px` (selects compacts) · `6px` (bouton carré 36, items dropdown, encart erreur) · `8px` (standard : boutons, inputs) · `12px` (modales, cartes auth) · `10px`/`16px` réservés à PricingPage.
+- **borderRadius** : `4px` (selects compacts) · `6px` (items dropdown, encart erreur) · `8px` (standard : boutons, inputs, **boutons carrés 40×40**) · `12px` (modales, cartes auth) · `10px`/`16px` réservés à PricingPage.
 - **gaps** : `4px` (label↔input) · `6px` (toolbar, boutons du pied) · `8px` (boutons contigus, icône↔texte) · `10px` (sections éditeur) · `12px` (forms auth, boutons de confirmation) · `16px` (modale de confirmation).
 - **Hover** : géré en JS inline via `onMouseEnter`/`onMouseLeave` (pattern du projet), avec `transition` en style.
 
@@ -119,54 +119,70 @@ Thème sombre bleu-nuit + accent cyan. Toutes les valeurs ci-dessous sont celles
 }}>Supprimer</button>
 ```
 
-### Bouton carré 40×40 (actions à côté d'un input)
-*Réf. : « Réordonner les morceaux » et « + », `SetlistEditor.tsx`*
+### Bouton carré 40×40
+*Réf. vivante : « Réordonner les morceaux » et « + » (ligne d'ajout morceau), « Tout effacer » (corbeille, barre d'outils), `SetlistEditor.tsx`. **Recette unique pour tout bouton carré 40×40** (action à côté d'un input, outil de barre d'outils, etc.).*
+
+> **Mot-clé agent** : dès qu'une demande contient « bouton carré », appliquer **cette** recette (40×40, radius 8px, icône 20px). C'est le seul design de bouton carré du projet.
 
 ```tsx
 <button
-  title="Réordonner les morceaux" aria-label="Réordonner les morceaux"
+  title="Mon bouton" aria-label="Mon bouton"
   style={{
     width: "40px", height: "40px", minWidth: "40px", padding: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
-    background: "hsl(222, 18%, 17%)",            // actif accent : hsl(var(--tl-accent-button))
+    background: "hsl(222, 18%, 17%)",            // variante accent : hsl(var(--tl-accent-button))
     border: "1px solid hsl(220, 15%, 22%)",
     color: "hsl(var(--tl-accent-custom-icons))",  // icône hérite via currentColor
     borderRadius: "8px", cursor: "pointer",
+    transition: "color 0.15s, background 0.15s",
   }}>
-  {/* icône 20px */}
+  {/* icône Lucide inline 20px */}
 </button>
-// Désactivé : background "hsl(222, 18%, 14%)", color "hsl(220, 15%, 30%)",
-//             cursor "not-allowed", opacity 0.5
+// Désactivé (neutre) : background "hsl(222, 18%, 14%)", color "hsl(220, 15%, 30%)",
+//                      cursor "not-allowed", opacity 0.5
+// Variante ACTIVE / PRIMAIRE (ex. bouton « + » d'ajout) :
+//   background "hsl(var(--tl-accent-button))", color "white",
+//   border "1px solid hsl(var(--tl-accent-button-border))"
+// Variante DESTRUCTIF (ex. corbeille « Tout effacer ») : rouge danger AU SURVOL
+//   via onMouseEnter/onMouseLeave (repos = accent comme ci-dessus) :
+//     onMouseEnter → color "hsl(0, 70%, 60%)" + background "hsl(222, 18%, 20%)"
+//     onMouseLeave → restaurer le repos (color accent, background "hsl(222, 18%, 17%)")
+//   désactivé : border "1px solid hsl(220, 15%, 16%)", background "transparent",
+//               color "hsl(220, 15%, 30%)", cursor "not-allowed"
+// Variante NEUTRE (action non destructive, ex. Réordonner) : pas de onMouseEnter rouge,
+//   garder color accent au repos COMME au survol.
 ```
 
-### Bouton carré 36×36 (barres d'outils)
-*Réf. : corbeille « Tout effacer », barre d'outils de `SetlistEditor.tsx`*
+### Slider (range) + popover — outil « Taille du texte »
+*Réf. vivante : outil « Taille du texte » (icône Lucide `type`), barre d'outils `SetlistEditor.tsx`. Le slider modifie `fontScale` (aperçu A4, **desktop seul** ; mobile = rien).*
+
+**Popover** (ouvert au clic sur le bouton, fermé au clic extérieur via `mousedown` + `ref.contains`) :
 
 ```tsx
-<button
-  title="Tout effacer" aria-label="Tout effacer"
-  style={{
-    width: "36px", height: "36px", minWidth: "36px", padding: 0,
-    display: "flex", alignItems: "center", justifyContent: "center",
-    borderRadius: "6px",
-    border: "1px solid hsl(220, 15%, 22%)",
-    background: "hsl(222, 18%, 17%)",
-    color: "hsl(var(--tl-accent-custom-icons))",
-    cursor: "pointer", transition: "color 0.15s, background 0.15s",
-  }}
-  onMouseEnter={(e) => {   // hover danger si action destructive, sinon garder accent
-    e.currentTarget.style.color = "hsl(0, 70%, 60%)";
-    e.currentTarget.style.background = "hsl(222, 18%, 20%)";
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.color = "hsl(var(--tl-accent-custom-icons))";
-    e.currentTarget.style.background = "hsl(222, 18%, 17%)";
-  }}>
-  {/* icône 18px */}
-</button>
-// Désactivé : border "1px solid hsl(220, 15%, 16%)", background "transparent",
-//             color "hsl(220, 15%, 30%)", cursor "not-allowed"
+<div style={{
+  position: "absolute", top: "100%", right: "0", marginTop: "6px",
+  zIndex: 40,                                   // dropdown §7
+  background: "hsl(222, 22%, 12%)",
+  border: "1px solid hsl(220, 15%, 22%)",
+  borderRadius: "8px", padding: "12px",
+  width: "200px",
+  display: "flex", flexDirection: "column", gap: "8px",
+  boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+}}>
+  <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase",
+    letterSpacing: "0.1em", color: "hsl(220, 15%, 45%)" }}>Taille du texte</span>
+  <input type="range" className="tl-range" min={0.7} max={1.6} step={0.05}
+         value={fontScale} onChange={(e) => onFontScaleChange(parseFloat(e.target.value))}
+         style={{ width: "100%" }} />
+  <span style={{ fontSize: "12px", color: "hsl(220, 15%, 60%)", textAlign: "right" }}>
+    {Math.round(fontScale * 100)} %
+  </span>
+</div>
 ```
+
+**Style du slider** (`.tl-range` dans `index.css` — le thumb ne peut pas être stylé en inline) :
+- track : `height: 4px`, `border-radius: 4px`, `background: hsl(222, 18%, 14%)`
+- thumb : `16px` rond, `background: hsl(var(--tl-accent-button))`, bordure `hsl(var(--tl-accent-button-border))` (webkit + moz)
 
 ### Bouton chrono (transport)
 *Réf. : `buttonStyle`, `ChronoPanel.tsx`*
@@ -342,7 +358,6 @@ Toute nouvelle icône est un SVG inline sur ce gabarit exact (tracés repris de 
 | Contexte | Taille |
 |---|---|
 | Dans un bouton avec texte (item de modale) | `16` |
-| Dans un bouton carré 36×36 | `18` |
 | Dans un bouton carré 40×40 | `20` |
 | Logos / illustrations (auth, pricing) | `24` à `64` |
 
@@ -350,7 +365,9 @@ La couleur n'est **jamais** définie sur le SVG : elle vient du `color` du bouto
 
 ### Icônes personnalisées de l'utilisateur (second canal officiel)
 
-L'utilisateur crée ses propres icônes en `.svg` (comme `corbeille.svg` et `ordre.svg`). **C'est le canal privilégié dès qu'une icône perso existe ou est fournie** — dans ce cas, ne pas la remplacer par une icône Lucide. Procédure d'intégration :
+L'utilisateur crée ses propres icônes en `.svg` (ex. `ordre.svg`). **C'est le canal privilégié dès qu'une icône perso existe ou est fournie** — dans ce cas, ne pas la remplacer par une icône Lucide. Procédure d'intégration :
+
+> **Exception documentée** : l'icône « Tout effacer » de la barre d'outils utilise un **SVG Lucide inline (`trash-2`)**, choix explicite de l'utilisateur. Ne pas réintroduire `corbeille.svg` (supprimé). Pour les futurs outils de la barre, préférer un SVG Lucide inline (§3, gabarit ci-dessus) plutôt qu'un `.svg` perso, afin de garder la barre cohérente.
 
 1. Placer le fichier dans `src/assets/` (nom en français, minuscules, ex. `partage.svg`).
 2. Format attendu : `viewBox="0 0 256 256"` et **`fill="currentColor"`** sur la racine `<svg>` (obligatoire pour hériter de la couleur du bouton). Pas de couleurs codées en dur dans le fichier.
@@ -384,7 +401,7 @@ Quand une demande cite une zone, utiliser cette carte. Si la zone demandée n'y 
 
 **Sidebar d'édition setlist** = `src/components/SetlistEditor.tsx` (fond `hsl(222,20%,11%)`, borderRight) :
 1. **En-tête** : label « SETLIST » uppercase + logo (padding `10px 12px`)
-2. **Barre d'outils** (haut de la zone défilable, alignée à droite, `gap: 6px`) : bouton corbeille 36×36 « Tout effacer ». *→ C'est ici qu'on ajoute les nouveaux boutons d'outils (carré 36×36).*
+2. **Barre d'outils** (haut de la zone défilable, alignée à droite, `gap: 6px`) : outil « Taille du texte » 40×40 (icône Lucide `type`, ouvre un slider, **desktop seul**) à gauche du bouton corbeille 40×40 « Tout effacer » (réf. recettes « Bouton carré 40×40 » et « Slider + popover » §2). *→ C'est la seule zone pour les outils de la sidebar : tout nouveau outil se place ici, au gabarit carré 40×40 (même recette, même `gap: 6px`).*
 3. **Section infos setlist** : label+input « Groupe », toggle + inputs « Temps de scène »
 4. **Séparateur** (1px, `hsl(220,15%,18%)`)
 5. **Ligne d'ajout morceau** : label « Morceau », input + bouton 40×40 « Réordonner » + bouton 40×40 « + »

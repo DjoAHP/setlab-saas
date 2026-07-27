@@ -3,7 +3,6 @@ import { useSetlab } from "../context/SetlabContext";
 import type { Song } from "../types";
 import { ExportModal } from "./ExportModal";
 import { useSubscription } from "../hooks/useSubscription";
-import CorbeilleIcon from "../assets/corbeille.svg?react";
 import OrdreIcon from "../assets/ordre.svg?react";
 
 const TONALITES = [
@@ -24,11 +23,25 @@ const timeSelectStyle: React.CSSProperties = {
     cursor: "pointer",
   };
 
-export function SetlistEditor() {
+export function SetlistEditor({ isMobile, fontScale, onFontScaleChange }: { isMobile: boolean; fontScale: number; onFontScaleChange: (v: number) => void }) {
   const {
     setlist, setBandName, setStageTimeLimit,
     addSong, updateSong, deleteSong, reorderSong, importerSetlist, exporterSetlist, clearSetlist,
   } = useSetlab();
+
+  const [textToolOpen, setTextToolOpen] = useState(false);
+  const textWrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!textToolOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (textWrapRef.current && !textWrapRef.current.contains(e.target as Node)) {
+        setTextToolOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [textToolOpen]);
 
   const [newSongTitle, setNewSongTitle] = useState("");
   const [editingSongId, setEditingSongId] = useState<string | null>(null);
@@ -274,20 +287,97 @@ export function SetlistEditor() {
       <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", minHeight: 0 }}>
         <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "10px", minHeight: 0, minWidth: 0 }}>
           {/* Barre d'outils */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px" }}>
+          <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px" }}>
+            {!isMobile && (
+              <div ref={textWrapRef} style={{ display: "contents" }}>
+                <button
+                  onClick={() => setTextToolOpen((o) => !o)}
+                  title="Taille du texte"
+                  aria-label="Taille du texte"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    minWidth: "40px",
+                    padding: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "8px",
+                    border: "1px solid hsl(220, 15%, 22%)",
+                    background: "hsl(222, 18%, 17%)",
+                    color: "hsl(var(--tl-accent-custom-icons))",
+                    cursor: "pointer",
+                    transition: "color 0.15s, background 0.15s",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 20%)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "hsl(222, 18%, 17%)"; }}
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ flexShrink: 0 }}
+                    aria-hidden="true"
+                  >
+                    <path d="M12 4v16" />
+                    <path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2" />
+                    <path d="M9 20h6" />
+                  </svg>
+                </button>
+
+                {textToolOpen && (
+                  <div
+                    style={{
+                      position: "absolute", top: "100%", right: "0", marginTop: "6px",
+                      zIndex: 40,
+                      background: "hsl(222, 22%, 12%)",
+                      border: "1px solid hsl(220, 15%, 22%)",
+                      borderRadius: "8px", padding: "12px",
+                      width: "200px",
+                      display: "flex", flexDirection: "column", gap: "8px",
+                      boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(220, 15%, 45%)" }}>
+                      Taille du texte
+                    </span>
+                    <input
+                      type="range"
+                      className="tl-range"
+                      min={0.7}
+                      max={1.6}
+                      step={0.05}
+                      value={fontScale}
+                      onChange={(e) => onFontScaleChange(parseFloat(e.target.value))}
+                      style={{ width: "100%" }}
+                      aria-label="Échelle de la police de l'aperçu"
+                    />
+                    <span style={{ fontSize: "12px", color: "hsl(220, 15%, 60%)", textAlign: "right" }}>
+                      {Math.round(fontScale * 100)} %
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
             <button
               onClick={() => { if (!setlistVide) setClearConfirm(true); }}
               disabled={setlistVide}
               title={setlistVide ? "Créer une setlist" : "Tout effacer"}
               style={{
-                width: "36px",
-                height: "36px",
-                minWidth: "36px",
+                width: "40px",
+                height: "40px",
+                minWidth: "40px",
                 padding: 0,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRadius: "6px",
+                borderRadius: "8px",
                 border: setlistVide ? "1px solid hsl(220, 15%, 16%)" : "1px solid hsl(220, 15%, 22%)",
                 background: setlistVide ? "transparent" : "hsl(222, 18%, 17%)",
                 color: setlistVide ? "hsl(220, 15%, 30%)" : "hsl(var(--tl-accent-custom-icons))",
@@ -307,7 +397,24 @@ export function SetlistEditor() {
                 }
               }}
             >
-              <CorbeilleIcon width="18" height="18" style={{ flexShrink: 0 }} />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ flexShrink: 0 }}
+                aria-hidden="true"
+              >
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                <path d="M3 6h18" />
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
             </button>
           </div>
 
