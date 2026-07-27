@@ -23,7 +23,7 @@ const timeSelectStyle: React.CSSProperties = {
     cursor: "pointer",
   };
 
-export function SetlistEditor({ isMobile, fontScale, onFontScaleChange }: { isMobile: boolean; fontScale: number; onFontScaleChange: (v: number) => void }) {
+export function SetlistEditor({ isMobile, scales, onScaleChange }: { isMobile: boolean; scales: { band: number; song: number; stage: number }; onScaleChange: (key: "band" | "song" | "stage", value: number) => void }) {
   const {
     setlist, setBandName, setStageTimeLimit,
     addSong, updateSong, deleteSong, reorderSong, importerSetlist, exporterSetlist, clearSetlist,
@@ -42,6 +42,26 @@ export function SetlistEditor({ isMobile, fontScale, onFontScaleChange }: { isMo
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, [textToolOpen]);
+
+  const renderScaleSlider = (key: "band" | "song" | "stage", label: string) => (
+    <div key={key} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: "11px", color: "hsl(220, 15%, 60%)" }}>{label}</span>
+        <span style={{ fontSize: "11px", color: "hsl(220, 15%, 45%)" }}>{Math.round(scales[key] * 100)} %</span>
+      </div>
+      <input
+        type="range"
+        className="tl-range"
+        min={0.7}
+        max={1.6}
+        step={0.05}
+        value={scales[key]}
+        onChange={(e) => onScaleChange(key, parseFloat(e.target.value))}
+        style={{ width: "100%" }}
+        aria-label={label}
+      />
+    </div>
+  );
 
   const [newSongTitle, setNewSongTitle] = useState("");
   const [editingSongId, setEditingSongId] = useState<string | null>(null);
@@ -338,7 +358,7 @@ export function SetlistEditor({ isMobile, fontScale, onFontScaleChange }: { isMo
                       background: "hsl(222, 22%, 12%)",
                       border: "1px solid hsl(220, 15%, 22%)",
                       borderRadius: "8px", padding: "12px",
-                      width: "200px",
+                      width: "220px",
                       display: "flex", flexDirection: "column", gap: "8px",
                       boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
                     }}
@@ -347,20 +367,9 @@ export function SetlistEditor({ isMobile, fontScale, onFontScaleChange }: { isMo
                     <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(220, 15%, 45%)" }}>
                       Taille du texte
                     </span>
-                    <input
-                      type="range"
-                      className="tl-range"
-                      min={0.7}
-                      max={1.6}
-                      step={0.05}
-                      value={fontScale}
-                      onChange={(e) => onFontScaleChange(parseFloat(e.target.value))}
-                      style={{ width: "100%" }}
-                      aria-label="Échelle de la police de l'aperçu"
-                    />
-                    <span style={{ fontSize: "12px", color: "hsl(220, 15%, 60%)", textAlign: "right" }}>
-                      {Math.round(fontScale * 100)} %
-                    </span>
+                    {renderScaleSlider("band", "Nom du groupe")}
+                    {renderScaleSlider("song", "Morceaux")}
+                    {renderScaleSlider("stage", "Temps de scène")}
                   </div>
                 )}
               </div>

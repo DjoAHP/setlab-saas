@@ -16,7 +16,7 @@ function AppContent() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [mobileTab, setMobileTab] = useState<'editor' | 'preview' | 'chrono'>('editor');
   const [editorWidth, setEditorWidth] = useState(320);
-  const [previewFontScale, setPreviewFontScale] = useState(1);
+  const [previewScales, setPreviewScales] = useState<{ band: number; song: number; stage: number }>({ band: 1, song: 1, stage: 1 });
   const enTrainDeRedimensionner = useRef(false);
   const xDepart = useRef(0);
   const largeurDepart = useRef(0);
@@ -103,7 +103,7 @@ function AppContent() {
           {/* Panneau actif */}
           {mobileTab === 'editor' && (
             <div style={{ position: 'absolute', inset: 0 }}>
-              <SetlistEditor isMobile={true} fontScale={previewFontScale} onFontScaleChange={setPreviewFontScale} />
+              <SetlistEditor isMobile={true} scales={previewScales} onScaleChange={(k, v) => setPreviewScales((s) => ({ ...s, [k]: v }))} />
             </div>
           )}
           {mobileTab === 'chrono' && (
@@ -117,7 +117,7 @@ function AppContent() {
             ? { position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }
             : { position: 'absolute', left: '-9999px', top: 0, width: '800px', height: '1131px' }
           }>
-            <SetlistPreview fontScale={previewFontScale} />
+            <SetlistPreview scales={previewScales} />
           </div>
         </div>
         <div
@@ -154,7 +154,7 @@ function AppContent() {
   return (
     <div style={{ display: 'flex', flexDirection: 'row', height: '100%', width: '100%', overflow: 'hidden' }}>
       <div style={{ width: `${editorWidth}px`, flexShrink: 0, height: '100%', position: 'relative' }}>
-        <SetlistEditor isMobile={false} fontScale={previewFontScale} onFontScaleChange={setPreviewFontScale} />
+        <SetlistEditor isMobile={false} scales={previewScales} onScaleChange={(k, v) => setPreviewScales((s) => ({ ...s, [k]: v }))} />
         <div
           onMouseDown={demarrerRedim}
           style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', cursor: 'col-resize', zIndex: 10, background: 'transparent' }}
@@ -163,7 +163,7 @@ function AppContent() {
         />
       </div>
         <div style={{ flex: 1, minWidth: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <SetlistPreview fontScale={previewFontScale} />
+          <SetlistPreview scales={previewScales} />
         </div>
       <div style={{ width: '320px', flexShrink: 0, height: '100%' }}>
         <ChronoPanel />

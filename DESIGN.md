@@ -154,33 +154,31 @@ Thème sombre bleu-nuit + accent cyan. Toutes les valeurs ci-dessous sont celles
 ```
 
 ### Slider (range) + popover — outil « Taille du texte »
-*Réf. vivante : outil « Taille du texte » (icône Lucide `type`), barre d'outils `SetlistEditor.tsx`. Le slider modifie `fontScale` (aperçu A4, **desktop seul** ; mobile = rien).*
+*Réf. vivante : outil « Taille du texte » (icône Lucide `type`), barre d'outils `SetlistEditor.tsx`. 3 sliders indépendants modifiant `scales` (aperçu A4, **desktop seul** ; mobile = rien) : `band` = Nom du groupe, `song` = Morceaux, `stage` = Temps de scène.*
 
-**Popover** (ouvert au clic sur le bouton, fermé au clic extérieur via `mousedown` + `ref.contains`) :
+**Popover** (ouvert au clic sur le bouton, fermé au clic extérieur via `mousedown` + `ref.contains`) — une ligne `renderScaleSlider(key, label)` par échelle :
 
 ```tsx
-<div style={{
-  position: "absolute", top: "100%", right: "0", marginTop: "6px",
-  zIndex: 40,                                   // dropdown §7
-  background: "hsl(222, 22%, 12%)",
-  border: "1px solid hsl(220, 15%, 22%)",
-  borderRadius: "8px", padding: "12px",
-  width: "200px",
-  display: "flex", flexDirection: "column", gap: "8px",
-  boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-}}>
-  <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase",
-    letterSpacing: "0.1em", color: "hsl(220, 15%, 45%)" }}>Taille du texte</span>
-  <input type="range" className="tl-range" min={0.7} max={1.6} step={0.05}
-         value={fontScale} onChange={(e) => onFontScaleChange(parseFloat(e.target.value))}
-         style={{ width: "100%" }} />
-  <span style={{ fontSize: "12px", color: "hsl(220, 15%, 60%)", textAlign: "right" }}>
-    {Math.round(fontScale * 100)} %
-  </span>
-</div>
+const renderScaleSlider = (key: "band" | "song" | "stage", label: string) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <span style={{ fontSize: "11px", color: "hsl(220, 15%, 60%)" }}>{label}</span>
+      <span style={{ fontSize: "11px", color: "hsl(220, 15%, 45%)" }}>{Math.round(scales[key] * 100)} %</span>
+    </div>
+    <input type="range" className="tl-range" min={0.7} max={1.6} step={0.05}
+           value={scales[key]}
+           onChange={(e) => onScaleChange(key, parseFloat(e.target.value))}
+           style={{ width: "100%" }} aria-label={label} />
+  </div>
+);
+// Panel : fond hsl(222,22%,12%), bordure hsl(220,15%,22%), radius 8px, padding 12px,
+//         width 220px, zIndex 40, gap 8px + titre "Taille du texte"
+//         + renderScaleSlider("band", "Nom du groupe")
+//         + renderScaleSlider("song", "Morceaux")
+//         + renderScaleSlider("stage", "Temps de scène")
 ```
 
-**Style du slider** (`.tl-range` dans `index.css` — le thumb ne peut pas être stylé en inline) :
+**Style du slider** (`.tl-range` dans `index.css`, le thumb ne peut pas être stylé en inline) :
 - track : `height: 4px`, `border-radius: 4px`, `background: hsl(222, 18%, 14%)`
 - thumb : `16px` rond, `background: hsl(var(--tl-accent-button))`, bordure `hsl(var(--tl-accent-button-border))` (webkit + moz)
 
