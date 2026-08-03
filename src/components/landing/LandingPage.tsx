@@ -17,9 +17,11 @@ export function LandingPage() {
       flex: 1,
     }}>
       <Navbar />
-      <Hero />
-      <Features />
-      <AppPreview />
+      <main style={{ flex: 1 }}>
+        <Hero />
+        <Features />
+        <AppPreview />
+      </main>
       <Footer />
     </div>
   );

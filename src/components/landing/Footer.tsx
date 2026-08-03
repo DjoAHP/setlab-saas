@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export function Footer() {
   const linkStyle: React.CSSProperties = {
-    color: 'hsl(220, 15%, 50%)', fontSize: '13px',
+    color: 'hsl(220, 15%, 45%)', fontSize: '13px',
     textDecoration: 'none', transition: 'color 0.2s',
     cursor: 'pointer',
   };
@@ -14,34 +14,49 @@ export function Footer() {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
       style={{
-        borderTop: '1px solid hsl(220, 15%, 18%)',
-        padding: '40px 24px',
+        borderTop: '1px solid rgba(255,255,255,0.05)',
+        padding: 'clamp(32px, 5vw, 48px) clamp(20px, 4vw, 48px)',
         maxWidth: '1100px', margin: '0 auto',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        flexWrap: 'wrap', gap: '16px',
         boxSizing: 'border-box',
       }}
     >
-      <a href="/" style={{
-        fontSize: '16px', fontWeight: 700,
-        color: 'hsl(198, 80%, 80%)', letterSpacing: '1px',
-        textDecoration: 'none',
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        flexWrap: 'wrap', gap: '24px', marginBottom: '32px',
       }}>
-        SetLab
-      </a>
+        <a href="/" style={{
+          fontSize: '18px', fontWeight: 800, color: 'white',
+          letterSpacing: '-0.02em', textDecoration: 'none',
+        }}>
+          Set<span style={{ color: 'hsl(198, 80%, 80%)' }}>Lab</span>
+        </a>
 
-      <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-        <span style={linkStyle} onClick={() => {
-          document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-        }}>Fonctionnalités</span>
-        <a href="/tarifs" style={linkStyle}>Tarifs</a>
-        <a href="/login" style={linkStyle}>Se connecter</a>
-        <a href="/register" style={linkStyle}>Créer un compte</a>
+        <div style={{ display: 'flex', gap: '28px', flexWrap: 'wrap' }}>
+          <span style={linkStyle} onClick={() => {
+            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          onMouseEnter={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 70%)'; }}
+          onMouseLeave={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 45%)'; }}
+          >Fonctionnalités</span>
+          <a href="/tarifs" style={linkStyle}
+          onMouseEnter={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 70%)'; }}
+          onMouseLeave={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 45%)'; }}
+          >Tarifs</a>
+          <a href="/login" style={linkStyle}
+          onMouseEnter={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 70%)'; }}
+          onMouseLeave={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 45%)'; }}
+          >Se connecter</a>
+          <a href="/register" style={linkStyle}
+          onMouseEnter={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 70%)'; }}
+          onMouseLeave={(e) => { (e.target as HTMLElement).style.color = 'hsl(220, 15%, 45%)'; }}
+          >Créer un compte</a>
+        </div>
       </div>
 
       <div style={{
-        width: '100%', textAlign: 'center', marginTop: '16px',
-        fontSize: '12px', color: 'hsl(220, 15%, 35%)',
+        borderTop: '1px solid rgba(255,255,255,0.04)',
+        paddingTop: '24px', textAlign: 'center',
+        fontSize: '12px', color: 'hsl(220, 15%, 30%)',
       }}>
         © 2026 SetLab. Tous droits réservés.
       </div>
