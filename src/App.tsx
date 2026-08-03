@@ -9,6 +9,7 @@ import { SetlistEditor } from './components/SetlistEditor';
 import { SetlistPreview } from './components/SetlistPreview';
 import { ChronoPanel } from './components/ChronoPanel';
 import { PricingPage } from './components/pricing/PricingPage';
+import { LandingPage } from './components/landing/LandingPage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 function AppContent() {
@@ -225,7 +226,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/" element={<Navigate to="/app" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/tarifs" element={<PricingPage />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
