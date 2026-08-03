@@ -13,6 +13,8 @@ export function LandingPage() {
       color: 'hsl(210, 30%, 90%)',
       overflowX: 'hidden',
       overflowY: 'auto',
+      display: 'flex', flexDirection: 'column',
+      flex: 1,
     }}>
       <Navbar />
       <Hero />
