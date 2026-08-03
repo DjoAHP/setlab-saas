@@ -38,7 +38,7 @@ Le paramètre public `SITE_URL` est défini dans `functions/.env.setlab-saas` (c
 
 ## Authentification & synchronisation
 
-L'app **nécessite un compte** (email/mdp ou Google). Les setlists sont stockées localement dans Dexie et synchronisées en arrière-plan vers Firestore (collection `setlists`, accès restreint au `userId` propriétaire). En cas de données locales existantes avant la première connexion, une modal propose de les associer au compte ou de les ignorer.
+L'app **nécessite un compte** (email/mdp ou Google). Les setlists sont stockées localement dans Dexie et synchronisées en arrière-plan vers Firestore (collection `setlists`, accès restreint au `userId` propriétaire). L'export/import de fichiers `.tl` permet de sauvegarder ou restaurer ses setlists.
 
 Le statut de synchronisation est visible en haut de la sidebar ChronoPanel (synced, syncing, offline, error), avec un menu profil pour la déconnexion.
 
@@ -68,8 +68,6 @@ src/
 │   │   ├── RegisterPage.tsx      # /register
 │   │   ├── ResetPasswordPage.tsx # /reset-password
 │   │   └── LoadingScreen.tsx     # écran de chargement session
-│   ├── migration/
-│   │   └── MigrationModal.tsx    # migration setlists locales
 │   ├── sync/
 │   │   └── SyncIndicator.tsx     # statut sync + profil
 │   ├── SetlistEditor.tsx         # Sidebar gauche — édition de la setlist

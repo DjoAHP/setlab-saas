@@ -16,7 +16,22 @@ function AppContent() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [mobileTab, setMobileTab] = useState<'editor' | 'preview' | 'chrono'>('editor');
   const [editorWidth, setEditorWidth] = useState(320);
-  const [previewScales, setPreviewScales] = useState<{ band: number; song: number; stage: number }>({ band: 1, song: 1, stage: 1 });
+  const [previewScales, setPreviewScales] = useState<{ band: number; song: number; stage: number }>(() => {
+    try {
+      const saved = localStorage.getItem('setlab-preview-scales');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.band === 'number' && typeof parsed.song === 'number' && typeof parsed.stage === 'number') {
+          return parsed;
+        }
+      }
+    } catch { /* ignore */ }
+    return { band: 1, song: 1, stage: 1 };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('setlab-preview-scales', JSON.stringify(previewScales));
+  }, [previewScales]);
   const enTrainDeRedimensionner = useRef(false);
   const xDepart = useRef(0);
   const largeurDepart = useRef(0);

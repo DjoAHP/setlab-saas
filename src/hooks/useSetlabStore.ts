@@ -173,16 +173,6 @@ export function useSetlabStore() {
     URL.revokeObjectURL(url);
   }, [setlist]);
 
-  const setUserId = useCallback(async (userId: string) => {
-    setSetlist((prev) => {
-      if (!prev) return prev;
-      const updated = { ...prev, userId, updatedAt: maintenant() };
-      db.setlists.put(updated);
-      syncService.pushSetlist(updated);
-      return updated;
-    });
-  }, []);
-
   const clearSetlist = useCallback(() => {
     if (!setlist) return;
     sauvegarder({
@@ -203,7 +193,6 @@ export function useSetlabStore() {
     reorderSong,
     importerSetlist,
     exporterSetlist,
-    setUserId,
     clearSetlist,
   };
 }
