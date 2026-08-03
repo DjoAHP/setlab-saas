@@ -82,7 +82,9 @@ src/
 │   └── SetlabContext.tsx         # Provider React Context setlist
 ├── hooks/
 │   ├── useSetlabStore.ts         # Store custom (pas de Zustand)
-│   └── useSyncStatus.ts          # État de la synchronisation
+│   ├── useSyncStatus.ts          # État de la synchronisation
+│   ├── useExportQuota.ts         # Quota exports + transaction Firestore
+│   └── useRateLimit.ts           # Rate limiting côté client (auth)
 ├── services/
 │   ├── authService.ts            # Singleton Firebase Auth
 │   ├── syncService.ts            # Singleton Firestore sync

@@ -7,9 +7,28 @@ import {
   collection,
   Timestamp,
 } from 'firebase/firestore';
+import { z } from 'zod';
 import { getFirebaseFirestore } from '../firebase/config';
 import type { Setlist } from '../types';
 import { db as dexieDb } from '../db/schema';
+
+const SyncSongSchema = z.object({
+  id: z.string().max(128),
+  title: z.string().max(200),
+  position: z.number().int().min(0).max(500),
+  time: z.number().min(0).max(86400).optional(),
+  tonalite: z.string().max(10).optional(),
+});
+
+const SyncSetlistSchema = z.object({
+  id: z.string().max(128),
+  bandName: z.string().max(200),
+  stageTimeLimit: z.number().nullable(),
+  songs: z.array(SyncSongSchema).max(200),
+  userId: z.string().max(128),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
 
 export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'error';
 
@@ -100,11 +119,12 @@ class SyncService {
 
       try {
         const docRef = doc(this.firestore, 'setlists', setlist.id);
-        await setDoc(docRef, {
+        const validated = SyncSetlistSchema.parse({
           ...setlist,
           userId: this.userId,
           updatedAt: new Date().toISOString(),
         });
+        await setDoc(docRef, validated);
         this.lastSyncedAt = new Date().toISOString();
         this.error = null;
         this.setStatus('synced');
