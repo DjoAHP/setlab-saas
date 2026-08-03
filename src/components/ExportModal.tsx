@@ -12,7 +12,7 @@ interface ExportModalProps {
 export function ExportModal({ onClose }: ExportModalProps) {
   const { setlist } = useSetlab();
   const { plan } = useSubscription();
-  const { remaining, total, loading: quotaLoading, canExport, incrementExport, refresh } = useExportQuota();
+  const { remaining, total, loading: quotaLoading, tryIncrementExport, refresh } = useExportQuota();
   const [exporting, setExporting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -43,8 +43,10 @@ export function ExportModal({ onClose }: ExportModalProps) {
     setToast(`Téléchargement ${label[format] || format} en cours...`);
 
     try {
-      if (format === 'jpeg' || format === 'png') {
-        const allowed = await canExport();
+      const isQuotaChecked = format === 'jpeg' || format === 'png' || format === 'pdf';
+
+      if (isQuotaChecked) {
+        const allowed = await tryIncrementExport();
         if (!allowed) {
           setError('Quota mensuel atteint. Passez au plan Illimité pour exporter sans limite.');
           setToast(null);
@@ -58,7 +60,6 @@ export function ExportModal({ onClose }: ExportModalProps) {
         await exporterPdf();
       } else {
         await action();
-        await incrementExport();
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de l\'export');
@@ -214,7 +215,6 @@ export function ExportModal({ onClose }: ExportModalProps) {
           </div>
         )}
 
-        {/* Toast de téléchargement */}
         {toast && (
           <div
             style={{

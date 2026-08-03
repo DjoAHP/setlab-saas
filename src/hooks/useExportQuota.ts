@@ -59,7 +59,7 @@ export function useExportQuota() {
     }
   }, [user, db]);
 
-  const canExport = useCallback(async (): Promise<boolean> => {
+  const tryIncrementExport = useCallback(async (): Promise<boolean> => {
     if (!user) return false;
 
     try {
@@ -71,23 +71,8 @@ export function useExportQuota() {
       }
 
       const month = moisCourant();
-      const exportRef = doc(db, 'users', user.uid, 'exports', month);
-      const exportSnap = await getDoc(exportRef);
+      const ref = doc(db, 'users', user.uid, 'exports', month);
 
-      const count = exportSnap.exists() ? exportSnap.data().count : 0;
-      return count < QUOTA_MAX;
-    } catch {
-      return false;
-    }
-  }, [user, db]);
-
-  const incrementExport = useCallback(async (): Promise<boolean> => {
-    if (!user) return false;
-
-    const month = moisCourant();
-    const ref = doc(db, 'users', user.uid, 'exports', month);
-
-    try {
       await runTransaction(db, async (transaction) => {
         const existing = await transaction.get(ref);
         if (existing.exists()) {
@@ -107,18 +92,17 @@ export function useExportQuota() {
           });
         }
       });
+
       await refresh();
       return true;
-    } catch (err) {
-      console.error('Erreur incrément export:', err);
+    } catch {
       return false;
     }
   }, [user, db, refresh]);
 
   return {
     ...state,
-    canExport,
-    incrementExport,
+    tryIncrementExport,
     refresh,
   };
 }
