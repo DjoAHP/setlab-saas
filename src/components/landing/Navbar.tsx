@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { APP_VERSION } from '../../version';
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -34,24 +35,36 @@ export function Navbar() {
           padding: '0 clamp(20px, 4vw, 48px)',
           height: '72px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: scrolled ? 'rgba(10, 12, 20, 0.85)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(20px) saturate(1.2)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
-          transition: 'background 0.4s, border-bottom 0.4s, backdrop-filter 0.4s',
+          background: scrolled ? 'rgba(10, 12, 20, 0.85)' : 'rgba(10, 12, 20, 0.7)',
+          backdropFilter: 'blur(16px) saturate(1.2)',
+          WebkitBackdropFilter: 'blur(16px) saturate(1.2)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          transition: 'background 0.4s',
         }}
       >
         <a href="/" style={{
-          fontSize: '20px', fontWeight: 800,
-          color: 'white', letterSpacing: '-0.02em',
+          display: 'flex', alignItems: 'center', gap: '8px',
           textDecoration: 'none',
         }}>
-          Set<span style={{ color: 'hsl(198, 80%, 80%)' }}>Lab</span>
+          <img src="/assets/logo.svg" alt="" width="22" height="22" style={{ filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
+          <span style={{
+            fontSize: '18px', fontWeight: 800,
+            color: 'white', letterSpacing: '-0.02em',
+          }}>
+            SetLab
+          </span>
+          <span style={{
+            fontSize: '10px', fontWeight: 500,
+            color: 'hsl(220, 15%, 45%)', letterSpacing: '0.02em',
+          }}>
+            v{APP_VERSION}
+          </span>
         </a>
 
         {!isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '36px' }}>
-            {['Fonctionnalités', 'Aperçu'].map((label) => (
-              <span key={label} onClick={() => scrollTo(label === 'Fonctionnalités' ? 'features' : 'preview')} style={{
+            {['Fonctionnalités', 'Aperçu', 'Tarifs'].map((label) => (
+              <span key={label} onClick={() => scrollTo(label === 'Fonctionnalités' ? 'features' : label === 'Aperçu' ? 'preview' : 'pricing')} style={{
                 color: 'hsl(220, 15%, 60%)', fontSize: '14px', fontWeight: 500,
                 cursor: 'pointer', transition: 'color 0.2s',
                 letterSpacing: '0.01em',
@@ -134,8 +147,8 @@ export function Navbar() {
                 padding: '88px 32px 32px', display: 'flex', flexDirection: 'column', gap: '28px',
               }}
             >
-              {['Fonctionnalités', 'Aperçu'].map((label) => (
-                <span key={label} onClick={() => scrollTo(label === 'Fonctionnalités' ? 'features' : 'preview')} style={{
+              {['Fonctionnalités', 'Aperçu', 'Tarifs'].map((label) => (
+                <span key={label} onClick={() => scrollTo(label === 'Fonctionnalités' ? 'features' : label === 'Aperçu' ? 'preview' : 'pricing')} style={{
                   color: 'hsl(220, 15%, 70%)', fontSize: '18px', fontWeight: 500,
                   cursor: 'pointer',
                 }}>{label}</span>

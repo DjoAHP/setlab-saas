@@ -2,6 +2,7 @@ import { Navbar } from './Navbar';
 import { Hero } from './Hero';
 import { Features } from './Features';
 import { AppPreview } from './AppPreview';
+import { LandingPricing } from './LandingPricing';
 import { Footer } from './Footer';
 
 export function LandingPage() {
@@ -21,6 +22,7 @@ export function LandingPage() {
         <Hero />
         <Features />
         <AppPreview />
+        <LandingPricing />
       </main>
       <Footer />
     </div>

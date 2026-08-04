@@ -1,14 +1,9 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 
 export function AppPreview() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
-  const scale = useTransform(scrollYProgress, [0, 1], [0.95, 1]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section id="preview" ref={ref} style={{
+    <section id="preview" style={{
       padding: 'clamp(60px, 10vw, 120px) clamp(20px, 4vw, 48px)',
       background: 'linear-gradient(180deg, transparent 0%, rgba(61,143,168,0.02) 50%, transparent 100%)',
     }}>
@@ -42,7 +37,12 @@ export function AppPreview() {
           </p>
         </motion.div>
 
-        <motion.div style={{ scale, opacity }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6 }}
+        >
           <div style={{
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: '14px', overflow: 'hidden',
@@ -70,33 +70,16 @@ export function AppPreview() {
               </div>
             </div>
 
-            {/* App screenshot placeholder — to be replaced with real screenshot */}
+            {/* App screenshot */}
             <div style={{
-              aspectRatio: '16/10', width: '100%',
-              background: 'linear-gradient(135deg, hsl(222,20%,11%) 0%, hsl(222,22%,9%) 50%, hsl(222,20%,11%) 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '100%',
               position: 'relative', overflow: 'hidden',
             }}>
-              {/* Decorative grid */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-                backgroundSize: '40px 40px',
-              }} />
-              {/* Placeholder content */}
-              <div style={{
-                position: 'relative', zIndex: 1,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
-              }}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="hsl(220, 15%, 30%)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                  <line x1="8" y1="21" x2="16" y2="21" />
-                  <line x1="12" y1="17" x2="12" y2="21" />
-                </svg>
-                <span style={{ fontSize: '13px', color: 'hsl(220, 15%, 30%)' }}>
-                  Aperçu de l'application
-                </span>
-              </div>
+              <img
+                src="/apercu-setlab.png"
+                alt="Aperçu de l'application SetLab"
+                style={{ width: '100%', display: 'block' }}
+              />
             </div>
           </div>
         </motion.div>

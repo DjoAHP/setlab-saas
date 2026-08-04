@@ -4,6 +4,7 @@ import type { Song } from "../types";
 import { ExportModal } from "./ExportModal";
 import { useSubscription } from "../hooks/useSubscription";
 import OrdreIcon from "../assets/ordre.svg?react";
+import { APP_VERSION } from "../version";
 
 const TONALITES = [
   "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
@@ -295,11 +296,13 @@ export function SetlistEditor({ isMobile, scales, onScaleChange }: { isMobile: b
       {/* En-tête avec logo */}
       <div style={{ padding: "10px 12px", borderBottom: "1px solid hsl(220, 15%, 16%)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(220, 15%, 45%)" }}>
-            Setlist
+          <img src="/assets/logo.svg" alt="" width="20" height="20" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
+          <span style={{ fontSize: "12px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "hsl(210, 30%, 90%)" }}>
+            SetLab
           </span>
-          <span style={{ color: "hsl(220, 15%, 28%)", fontSize: "11px" }}>|</span>
-          <img src="/assets/logo.svg" alt="SetLab" width="24" height="24" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
+          <span style={{ fontSize: "10px", fontWeight: 500, color: "hsl(220, 15%, 40%)", letterSpacing: "0.02em" }}>
+            v{APP_VERSION}
+          </span>
         </div>
       </div>
 

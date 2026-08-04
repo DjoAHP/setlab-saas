@@ -14,13 +14,15 @@ export function Footer() {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
       style={{
-        borderTop: '1px solid rgba(255,255,255,0.05)',
+        background: 'rgba(10, 12, 20, 0.6)',
+        backdropFilter: 'blur(16px) saturate(1.2)',
+        WebkitBackdropFilter: 'blur(16px) saturate(1.2)',
+        borderTop: '1px solid rgba(255,255,255,0.06)',
         padding: 'clamp(32px, 5vw, 48px) clamp(20px, 4vw, 48px)',
-        maxWidth: '1100px', margin: '0 auto',
-        boxSizing: 'border-box',
       }}
     >
       <div style={{
+        maxWidth: '1100px', margin: '0 auto',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         flexWrap: 'wrap', gap: '24px', marginBottom: '32px',
       }}>

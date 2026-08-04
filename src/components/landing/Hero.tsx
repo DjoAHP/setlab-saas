@@ -28,7 +28,7 @@ export function Hero() {
         gap: 'clamp(40px, 5vw, 80px)',
       }}>
         {/* Left — Text */}
-        <div style={{ flex: '1 1 50%', minWidth: 0, position: 'relative', zIndex: 1 }}>
+        <div style={{ flex: '1 1 45%', minWidth: 0, position: 'relative', zIndex: 1 }}>
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -148,7 +148,7 @@ export function Hero() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           style={{
-            flex: '1 1 50%', minWidth: 0,
+            flex: '1 1 55%', minWidth: 0,
             perspective: '1200px',
           }}
         >
